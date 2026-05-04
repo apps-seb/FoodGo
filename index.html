@@ -57,14 +57,19 @@
     <!-- ESTADO GLOBAL -->
     <script>
         const state = {
-            currentView: 'waiter', // admin, waiter, kitchen, cashier
-            adminTab: 'sales',      // tables, menu, inventory, staff
+            currentView: 'waiter', // admin, waiter, kitchen, cashier, sales
+            adminTab: 'tables',      // menu, inventory, staff
+
+            zones: ['Salón Principal', 'Terraza'],
+            adminZone: 'Salón Principal',
+            waiterZone: 'Salón Principal',
+            cashBase: 0,
             
             // Datos Estructurales Mejorados
             tables: [
-                { id: 1, name: 'M1', x: 40, y: 40, status: 'free' },
-                { id: 2, name: 'M2', x: 160, y: 40, status: 'free' },
-                { id: 3, name: 'Terraza 1', x: 40, y: 160, status: 'free' }
+                { id: 1, name: 'M1', x: 40, y: 40, status: 'free', zone: 'Salón Principal' },
+                { id: 2, name: 'M2', x: 160, y: 40, status: 'free', zone: 'Salón Principal' },
+                { id: 3, name: 'Terraza 1', x: 40, y: 160, status: 'free', zone: 'Terraza' }
             ],
             menu: [
                 { id: 1, name: 'Ceviche Mixto', price: 28000, cost: 15000, category: 'Entradas', tag: 'Sugerido' },
@@ -100,7 +105,7 @@
                 adminMenu: { page: 1, itemsPerPage: 5 },
                 adminInventory: { page: 1, itemsPerPage: 5 },
                 adminStaff: { page: 1, itemsPerPage: 5 },
-                adminSales: { page: 1, itemsPerPage: 5 }
+                salesOrders: { page: 1, itemsPerPage: 5 }
             }
         };
 
@@ -158,7 +163,7 @@
             });
 
             // Ocultar todas las vistas
-            ['view-admin', 'view-waiter', 'view-kitchen', 'view-cashier'].forEach(id => {
+            ['view-admin', 'view-waiter', 'view-kitchen', 'view-cashier', 'view-sales'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
 
@@ -171,6 +176,7 @@
             if (state.currentView === 'waiter') renderWaiter();
             if (state.currentView === 'kitchen') renderKitchen();
             if (state.currentView === 'cashier') renderCashier();
+            if (state.currentView === 'sales') renderSales();
             
             renderHeaderBadges();
         }
@@ -291,6 +297,9 @@
             </button>
 
             <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 mt-6 px-2">Gestión y Ajustes</div>
+            <button onclick="changeView('sales')" data-view="sales" class="nav-btn">
+                <i class="ph-fill ph-chart-line-up text-xl"></i> Ventas
+            </button>
             <button onclick="changeView('admin', 'menu')" data-view="admin" class="nav-btn">
                 <i class="ph-fill ph-gear text-xl"></i> Administración
             </button>
@@ -310,12 +319,14 @@
     <!-- === CONTENEDOR VISTAS === -->
     <div class="flex-1 overflow-hidden relative flex flex-col w-full bg-slate-50">
         
+        <!-- VISTA: VENTAS -->
+        <div id="view-sales" class="hidden h-full flex flex-col w-full bg-slate-50 overflow-y-auto"></div>
+
         <!-- VISTA: ADMINISTRACIÓN -->
         <div id="view-admin" class="hidden h-full flex flex-col">
             <div class="bg-white border-b border-slate-200 px-4 py-3 flex gap-2 overflow-x-auto hide-scrollbar shrink-0 shadow-sm z-10">
-                <button onclick="changeAdminTab('sales')" id="tab-btn-sales" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Ventas del Día</button>
-                <button onclick="changeAdminTab('menu')" id="tab-btn-menu" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Menú y Platos</button>
                 <button onclick="changeAdminTab('tables')" id="tab-btn-tables" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Plano de Mesas</button>
+                <button onclick="changeAdminTab('menu')" id="tab-btn-menu" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Menú y Platos</button>
                 <button onclick="changeAdminTab('inventory')" id="tab-btn-inventory" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Inventario</button>
                 <button onclick="changeAdminTab('staff')" id="tab-btn-staff" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Personal</button>
             </div>
@@ -531,7 +542,7 @@
             const name = document.getElementById('m-table-name').value.trim();
             if(!name) return notify("Ingresa un nombre para la mesa", "warning");
             const id = state.tables.length > 0 ? Math.max(...state.tables.map(t => t.id)) + 1 : 1;
-            state.tables.push({ id, name, x: 20, y: 20, status: 'free' });
+            state.tables.push({ id, name, x: 20, y: 20, status: 'free', zone: state.adminZone });
             closeModal();
             renderAdmin();
             notify(`Mesa '${name}' creada con éxito`, 'success');
@@ -562,6 +573,151 @@
 
 
         // ==========================================
+        // MÓDULO DE VENTAS
+        // ==========================================
+        function renderSales() {
+            const container = document.getElementById('view-sales');
+            const paidOrders = state.orders.filter(o => o.status === 'paid');
+
+            let totalSales = 0;
+            let totalService = 0;
+            let cashInRegister = state.cashBase; // Start with the cash base
+            let totalProfit = 0;
+            let totalItemsSold = 0;
+
+            paidOrders.forEach(o => {
+                totalSales += o.subtotal;
+                totalService += (o.serviceCharge || 0);
+                if (o.paymentMethod === 'efectivo') {
+                    // Only add the cash received for the specific order.
+                    // Assuming finalTotal already includes service charge if paid in cash.
+                    // And cashReceived - change = finalTotal
+                    cashInRegister += o.finalTotal;
+                }
+                totalProfit += (o.profit || 0);
+                totalItemsSold += o.items.reduce((acc, item) => acc + item.quantity, 0);
+            });
+
+            const pag = state.pagination.salesOrders;
+            const start = (pag.page - 1) * pag.itemsPerPage;
+            const visible = paidOrders.slice(start, start + pag.itemsPerPage);
+
+            container.innerHTML = `
+                <div class="p-4 sm:p-6 h-full flex flex-col w-full">
+                    <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                        <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                            <div class="p-2 bg-blue-100 rounded-lg text-blue-600"><i class="ph-fill ph-chart-line-up"></i></div>
+                            Panel de Ventas
+                        </h2>
+                        <button onclick="modalSetCashBase()" class="bg-slate-100 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-xl font-bold transition-colors text-sm flex items-center gap-2 shadow-sm border border-slate-200">
+                            <i class="ph-bold ph-wallet"></i> Base: ${formatMoney(state.cashBase)}
+                        </button>
+                    </div>
+
+                    <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ventas Totales (Subtotal)</div>
+                            <div class="text-3xl font-black text-slate-800">${formatMoney(totalSales)}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Efectivo en Caja</div>
+                            <div class="text-3xl font-black text-emerald-600">${formatMoney(cashInRegister)}</div>
+                            <div class="text-[10px] text-slate-400 mt-1">Incluye base de ${formatMoney(state.cashBase)}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Servicio Recaudado</div>
+                            <div class="text-3xl font-black text-blue-600">${formatMoney(totalService)}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ganancia Neta</div>
+                            <div class="text-3xl font-black text-purple-600">${formatMoney(totalProfit)}</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
+                        <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                            <h3 class="text-lg font-black text-slate-800">Historial de Ventas</h3>
+                            <span class="bg-slate-200 text-slate-700 px-3 py-1 rounded-xl text-xs font-bold shadow-inner border border-slate-300">${totalItemsSold} artículos vendidos</span>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left min-w-[900px]">
+                                <thead class="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ref / Hora</th>
+                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Mesa / Zona</th>
+                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Método</th>
+                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Servicio</th>
+                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Cobrado</th>
+                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ganancia</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${visible.map(order => {
+                                        const table = state.tables.find(t => t.id === order.tableId);
+                                        const tableName = table ? table.name : '?';
+                                        const tableZone = table && table.zone ? table.zone : 'Sin zona';
+
+                                        const methodBadge = order.paymentMethod === 'efectivo' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                                            order.paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-purple-100 text-purple-700 border-purple-200';
+                                        return `
+                                            <tr class="hover:bg-slate-50 transition-colors">
+                                                <td class="p-4">
+                                                    <div class="font-bold text-slate-800">${order.ref}</div>
+                                                    <div class="text-[10px] text-slate-400 font-mono">${order.time}</div>
+                                                </td>
+                                                <td class="p-4">
+                                                    <div class="font-semibold text-slate-700">${tableName}</div>
+                                                    <div class="text-[10px] text-slate-500">${tableZone}</div>
+                                                </td>
+                                                <td class="p-4"><span class="px-2.5 py-1 rounded-lg text-xs font-bold capitalize border shadow-sm ${methodBadge}">${order.paymentMethod || 'N/A'}</span></td>
+                                                <td class="p-4 text-slate-600 font-medium">${formatMoney(order.serviceCharge || 0)}</td>
+                                                <td class="p-4 font-black text-slate-800">${formatMoney(order.finalTotal || order.total)}</td>
+                                                <td class="p-4 font-bold text-emerald-600">${formatMoney(order.profit || 0)}</td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                    ${visible.length === 0 ? `<tr><td colspan="6" class="p-10 text-center text-slate-400 font-medium flex flex-col items-center justify-center h-full w-full">
+                                        <i class="ph-duotone ph-receipt text-4xl mb-2 opacity-50"></i>
+                                        No hay ventas registradas aún.
+                                    </td></tr>` : ''}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-slate-200 bg-slate-50 shrink-0">
+                            ${getPaginationHTML('salesOrders', paidOrders.length)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function modalSetCashBase() {
+            openModal(`
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 class="font-bold text-lg text-slate-800">Ajustar Base de Caja</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Monto Inicial (COP)</label>
+                        <input type="number" id="m-cash-base" class="input-pro text-lg font-bold" value="${state.cashBase}" placeholder="Ej: 50000">
+                    </div>
+                    <p class="text-xs text-slate-500">Este valor se sumará al efectivo total recaudado en las ventas del día.</p>
+                    <button onclick="saveCashBase()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-colors">Guardar Base</button>
+                </div>
+            `);
+            setTimeout(() => document.getElementById('m-cash-base').focus(), 50);
+        }
+
+        function saveCashBase() {
+            const base = parseInt(document.getElementById('m-cash-base').value) || 0;
+            state.cashBase = base;
+            closeModal();
+            renderSales();
+            notify(`Base de caja actualizada a ${formatMoney(base)}`, 'success');
+        }
+
+        // ==========================================
         // MÓDULO 1: ADMINISTRACIÓN
         // ==========================================
         function changeAdminTab(tab) {
@@ -579,110 +735,34 @@
             if (state.adminTab === 'tables') {
                 container.innerHTML = `
                     <div class="flex flex-col h-full p-4 sm:p-6">
-                        <div class="flex justify-between items-center mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 gap-4">
                             <div>
                                 <h3 class="text-lg font-black text-slate-800">Distribución de Mesas</h3>
-                                <p class="text-xs text-slate-500 font-medium">Arrastra las mesas para configurar el salón.</p>
+                                <p class="text-xs text-slate-500 font-medium">Arrastra las mesas para configurar el salón. Haz clic en una mesa libre para reservarla.</p>
                             </div>
-                            <button onclick="modalAddTable()" class="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95 text-sm">
-                                <i class="ph-bold ph-plus"></i> Añadir Mesa
-                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="modalAddZone()" class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-200 border border-slate-200 transition-all active:scale-95 text-sm">
+                                    <i class="ph-bold ph-plus"></i> Zona
+                                </button>
+                                <button onclick="modalAddTable()" class="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95 text-sm">
+                                    <i class="ph-bold ph-plus"></i> Añadir Mesa
+                                </button>
+                            </div>
                         </div>
+
+                        <!-- Zone Tabs -->
+                        <div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
+                            ${state.zones.map(zone => `
+                                <button onclick="setAdminZone('${zone}')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap ${state.adminZone === zone ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">
+                                    ${zone}
+                                </button>
+                            `).join('')}
+                        </div>
+
                         <div id="floor-plan-admin" class="flex-1 w-full border border-slate-200 rounded-2xl relative overflow-hidden shadow-inner floor-grid touch-none"></div>
                     </div>
                 `;
-                renderFloorPlan('floor-plan-admin', true);
-            } 
-            if (state.adminTab === 'sales') {
-                const paidOrders = state.orders.filter(o => o.status === 'paid');
-
-                let totalSales = 0;
-                let totalService = 0;
-                let cashInRegister = 0;
-                let totalProfit = 0;
-                let totalItemsSold = 0;
-
-                paidOrders.forEach(o => {
-                    totalSales += o.subtotal; // Using subtotal for pure sales base before tax/service
-                    totalService += (o.serviceCharge || 0);
-                    if (o.paymentMethod === 'efectivo') {
-                        cashInRegister += o.finalTotal; // The amount actually added to the register
-                    }
-                    totalProfit += (o.profit || 0);
-                    totalItemsSold += o.items.reduce((acc, item) => acc + item.quantity, 0);
-                });
-
-                const pag = state.pagination.adminSales;
-                const start = (pag.page - 1) * pag.itemsPerPage;
-                const visible = paidOrders.slice(start, start + pag.itemsPerPage);
-
-                container.innerHTML = `
-                    <div class="p-4 sm:p-6 h-full overflow-y-auto flex flex-col">
-                        <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Ventas Totales (Subtotal)</div>
-                                <div class="text-2xl font-black text-slate-800">${formatMoney(totalSales)}</div>
-                            </div>
-                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Efectivo en Caja</div>
-                                <div class="text-2xl font-black text-emerald-600">${formatMoney(cashInRegister)}</div>
-                            </div>
-                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Servicio Recaudado</div>
-                                <div class="text-2xl font-black text-blue-600">${formatMoney(totalService)}</div>
-                            </div>
-                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Ganancia Neta</div>
-                                <div class="text-2xl font-black text-purple-600">${formatMoney(totalProfit)}</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
-                            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-                                <h3 class="text-lg font-black text-slate-800">Detalle de Órdenes Pagadas</h3>
-                                <span class="bg-slate-200 text-slate-700 px-3 py-1 rounded-xl text-xs font-bold">${totalItemsSold} artículos vendidos</span>
-                            </div>
-                            <div class="overflow-x-auto flex-1">
-                                <table class="w-full text-left min-w-[900px]">
-                                    <thead class="bg-slate-50 border-b border-slate-200">
-                                        <tr>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ref / Hora</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Mesa</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Método</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Servicio</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Cobrado</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ganancia</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100">
-                                        ${visible.map(order => {
-                                            const table = state.tables.find(t => t.id === order.tableId);
-                                            const methodBadge = order.paymentMethod === 'efectivo' ? 'bg-emerald-100 text-emerald-700' :
-                                                              order.paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700';
-                                            return `
-                                                <tr class="hover:bg-slate-50 transition-colors">
-                                                    <td class="p-4">
-                                                        <div class="font-bold text-slate-800">${order.ref}</div>
-                                                        <div class="text-[10px] text-slate-400 font-mono">${order.time}</div>
-                                                    </td>
-                                                    <td class="p-4 font-semibold text-slate-700">${table ? table.name : '?'}</td>
-                                                    <td class="p-4"><span class="px-2.5 py-1 rounded-lg text-xs font-bold capitalize ${methodBadge}">${order.paymentMethod || 'N/A'}</span></td>
-                                                    <td class="p-4 text-slate-600 font-medium">${formatMoney(order.serviceCharge || 0)}</td>
-                                                    <td class="p-4 font-black text-slate-800">${formatMoney(order.finalTotal || order.total)}</td>
-                                                    <td class="p-4 font-bold text-emerald-600">${formatMoney(order.profit || 0)}</td>
-                                                </tr>
-                                            `;
-                                        }).join('')}
-                                        ${visible.length === 0 ? `<tr><td colspan="6" class="p-8 text-center text-slate-400">No hay ventas registradas aún.</td></tr>` : ''}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
-                                ${getPaginationHTML('adminSales', paidOrders.length)}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                renderFloorPlan('floor-plan-admin', true, state.adminZone);
             }
             else if (state.adminTab === 'menu') {
                 const pag = state.pagination.adminMenu;
@@ -751,37 +831,120 @@
             }
         }
 
+        // --- Floor Plan / Zones ---
+        function setAdminZone(zone) {
+            state.adminZone = zone;
+            renderAdmin();
+        }
+
+        function setWaiterZone(zone) {
+            state.waiterZone = zone;
+            renderWaiter();
+        }
+
+        function modalAddZone() {
+            openModal(`
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 class="font-bold text-lg text-slate-800">Agregar Nueva Zona</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la Zona</label>
+                        <input type="text" id="m-zone-name" class="input-pro" placeholder="Ej: VIP, Terraza 2...">
+                    </div>
+                    <button onclick="saveZone()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-colors">Crear Zona</button>
+                </div>
+            `);
+            setTimeout(() => document.getElementById('m-zone-name').focus(), 50);
+        }
+
+        function saveZone() {
+            const name = document.getElementById('m-zone-name').value.trim();
+            if(!name) return notify("Ingresa un nombre para la zona", "warning");
+            if(state.zones.includes(name)) return notify("Esta zona ya existe", "warning");
+
+            state.zones.push(name);
+            state.adminZone = name; // Switch to new zone
+            closeModal();
+            renderAdmin();
+            notify(`Zona '${name}' creada con éxito`, 'success');
+        }
+
+        function toggleTableReservation(tableId) {
+            const table = state.tables.find(t => t.id === tableId);
+            if (!table) return;
+
+            if (table.status === 'occupied') {
+                return notify("No se puede reservar una mesa ocupada.", "warning");
+            }
+
+            table.status = table.status === 'free' ? 'reserved' : 'free';
+            renderAdmin();
+            const action = table.status === 'reserved' ? 'reservada' : 'liberada';
+            notify(`Mesa '${table.name}' ${action}`, 'info');
+        }
+
+
         // --- Drag & Drop Core Mejorado ---
         let draggedTable = null;
         let isDragging = false;
         let startX, startY;
 
-        function renderFloorPlan(containerId, isDraggable = false) {
+        function renderFloorPlan(containerId, isDraggable = false, zone = null) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
             
-            state.tables.forEach(table => {
+            let displayTables = state.tables;
+            if (zone) {
+                displayTables = displayTables.filter(t => t.zone === zone);
+            }
+
+            displayTables.forEach(table => {
                 const el = document.createElement('div');
                 const isFree = table.status === 'free';
+                const isReserved = table.status === 'reserved';
                 
-                const bgClass = isFree ? 'bg-white border-slate-300 text-slate-700' : 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-emerald-500/20';
+                let bgClass = 'bg-white border-slate-300 text-slate-700'; // free
+                let iconColor = 'text-slate-400';
+
+                if (table.status === 'occupied') {
+                    bgClass = 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-emerald-500/20';
+                    iconColor = 'text-emerald-500';
+                } else if (isReserved) {
+                    bgClass = 'bg-purple-50 border-purple-400 text-purple-800 shadow-purple-500/20';
+                    iconColor = 'text-purple-500';
+                }
                 
                 el.className = `table-item absolute w-20 h-20 sm:w-24 sm:h-24 rounded-3xl flex flex-col items-center justify-center shadow-lg border-2 select-none ${bgClass}`;
                 el.style.left = `${table.x}px`;
                 el.style.top = `${table.y}px`;
+
+                let indicator = '';
+                if (!isFree && !isDraggable) {
+                     const color = table.status === 'occupied' ? 'bg-emerald-500' : 'bg-purple-500';
+                     indicator = `<div class="absolute -top-1.5 -right-1.5 ${color} w-4 h-4 rounded-full border-2 border-white shadow-sm animate-pulse"></div>`;
+                }
+
                 el.innerHTML = `
-                    <i class="ph-fill ph-armchair text-2xl mb-1 ${isFree ? 'text-slate-400' : 'text-emerald-500'}"></i>
+                    <i class="ph-fill ph-armchair text-2xl mb-1 ${iconColor}"></i>
                     <span class="font-black text-xs sm:text-sm leading-tight text-center px-1 truncate w-full">${table.name}</span>
-                    ${!isFree && !isDraggable ? '<div class="absolute -top-1.5 -right-1.5 bg-emerald-500 w-4 h-4 rounded-full border-2 border-white shadow-sm animate-pulse"></div>' : ''}
+                    ${isReserved && isDraggable ? '<span class="text-[10px] font-bold text-purple-600 uppercase">Reserva</span>' : ''}
+                    ${indicator}
                 `;
 
                 if (isDraggable) {
                     el.style.cursor = 'grab';
                     
+                    // Doble clic / tap largo para reservar (o click en una zona sensible no cubierta por drag)
+                    // Para simplificar, agregamos un listener de click rápido vs drag
+                    let clickStartTime = 0;
+
                     const handleStart = (e) => {
                         if(e.target.tagName === 'BUTTON') return; // ignorar botones dentro
-                        isDragging = true;
+                        clickStartTime = Date.now();
+                        isDragging = false; // We don't know yet if it's a drag or click
                         draggedTable = table;
                         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
                         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
@@ -790,12 +953,26 @@
                         startX = clientX - rect.left;
                         startY = clientY - rect.top;
                         
-                        el.classList.add('dragging');
-                        document.body.style.userSelect = 'none'; // Prevenir selección global
+                        // Delay visual dragging slightly to allow clicks
+                        setTimeout(() => {
+                           if(draggedTable === table && Date.now() - clickStartTime > 150) {
+                               isDragging = true;
+                               el.classList.add('dragging');
+                               document.body.style.userSelect = 'none';
+                           }
+                        }, 150);
+                    };
+
+                    const handleClick = (e) => {
+                        if(Date.now() - clickStartTime < 200 && !isDragging) {
+                            toggleTableReservation(table.id);
+                        }
                     };
 
                     el.addEventListener('mousedown', handleStart);
                     el.addEventListener('touchstart', handleStart, {passive: false});
+                    el.addEventListener('mouseup', handleClick);
+                    el.addEventListener('touchend', handleClick);
                 } else {
                     el.style.cursor = 'pointer';
                     el.onclick = () => selectWaiterTable(table.id);
@@ -859,16 +1036,28 @@
                 // Seleccionador de Mesas
                 container.innerHTML = `
                     <div class="p-4 sm:p-6 flex flex-col h-full overflow-hidden bg-slate-50">
-                        <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                            <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                                <i class="ph-fill ph-map-trifold text-blue-500"></i> Salón Principal
-                            </h2>
-                            <p class="text-sm text-slate-500 font-medium mt-1">Selecciona una mesa para tomar o visualizar su pedido.</p>
+                        <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                                    <i class="ph-fill ph-map-trifold text-blue-500"></i> Selector de Mesas
+                                </h2>
+                                <p class="text-sm text-slate-500 font-medium mt-1">Selecciona una mesa para tomar o visualizar su pedido.</p>
+                            </div>
+
+                            <!-- Zone Tabs for Waiter -->
+                            <div class="flex gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto pb-2 sm:pb-0">
+                                ${state.zones.map(zone => `
+                                    <button onclick="setWaiterZone('${zone}')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap ${state.waiterZone === zone ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">
+                                        ${zone}
+                                    </button>
+                                `).join('')}
+                            </div>
                         </div>
-                        <div id="floor-plan-waiter" class="flex-1 w-full bg-white border border-slate-200 rounded-3xl relative overflow-hidden shadow-sm floor-grid"></div>
+
+                        <div id="floor-plan-waiter" class="flex-1 w-full bg-white border border-slate-200 rounded-3xl relative overflow-hidden shadow-sm floor-grid touch-none"></div>
                     </div>
                 `;
-                setTimeout(() => renderFloorPlan('floor-plan-waiter', false), 0);
+                setTimeout(() => renderFloorPlan('floor-plan-waiter', false, state.waiterZone), 0);
             } else {
                 // Interfaz de Toma de Pedidos
                 const table = state.tables.find(t => t.id === state.selectedTableId);
@@ -1242,26 +1431,48 @@
             const order = state.orders.find(o => o.id === orderId);
 
             // By default, service is 10% of subtotal
-            const serviceCharge = order.subtotal * 0.10;
+            const defaultServiceCharge = order.subtotal * 0.10;
 
             openModal(`
                 <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <h3 class="font-bold text-lg text-slate-800">Procesar Pago - Mesa ${table.name}</h3>
                     <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
                 </div>
-                <div class="p-5 space-y-4">
+                <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+                    <!-- Detalle de Productos -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm max-h-48 overflow-y-auto">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Detalle del Pedido</h4>
+                        <div class="space-y-2">
+                            ${order.items.map(item => `
+                                <div class="flex justify-between text-sm">
+                                    <span class="font-medium text-slate-700"><span class="text-slate-400 mr-1">${item.quantity}x</span>${item.name}</span>
+                                    <span class="text-slate-800">${formatMoney(item.price * item.quantity)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-sm font-medium text-slate-600">Subtotal + IVA:</span>
                             <span class="font-bold text-slate-800" id="payment-base-total" data-base="${order.total}">${formatMoney(order.total)}</span>
                         </div>
-                        <label class="flex items-center gap-2 cursor-pointer mt-3 p-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
-                            <input type="checkbox" id="m-payment-service" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500" onchange="updatePaymentTotal(${order.total}, ${serviceCharge})" checked>
-                            <span class="text-sm font-medium text-slate-700">Incluir Servicio Voluntario (10%: ${formatMoney(serviceCharge)})</span>
-                        </label>
+
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Servicio Voluntario (Propina)</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-bold">$</span>
+                                <input type="number" id="m-payment-service-input" class="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-1.5 text-sm font-bold text-blue-600 outline-none focus:border-blue-400" value="${defaultServiceCharge}" oninput="updatePaymentTotal(${order.total})">
+                            </div>
+                            <div class="text-[10px] text-slate-400 mt-1 flex gap-2">
+                                <button onclick="document.getElementById('m-payment-service-input').value=${defaultServiceCharge}; updatePaymentTotal(${order.total})" class="hover:text-blue-500">10% Sugerido</button>
+                                <button onclick="document.getElementById('m-payment-service-input').value=0; updatePaymentTotal(${order.total})" class="hover:text-blue-500">Sin Servicio</button>
+                            </div>
+                        </div>
+
                         <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-200">
                             <span class="text-base font-bold text-slate-800">Total a Pagar:</span>
-                            <span class="text-xl font-black text-emerald-600" id="payment-final-total">${formatMoney(order.total + serviceCharge)}</span>
+                            <span class="text-xl font-black text-emerald-600" id="payment-final-total">${formatMoney(order.total + defaultServiceCharge)}</span>
                         </div>
                     </div>
 
@@ -1295,14 +1506,16 @@
             }, 100);
 
             // Set initial total value
-            window.currentPaymentTotal = order.total + serviceCharge;
-            window.currentServiceChargeAmount = serviceCharge;
+            window.currentPaymentTotal = order.total + defaultServiceCharge;
+            window.currentServiceChargeAmount = defaultServiceCharge;
         }
 
-        function updatePaymentTotal(baseTotal, serviceAmount) {
-            const isChecked = document.getElementById('m-payment-service').checked;
-            window.currentPaymentTotal = isChecked ? baseTotal + serviceAmount : baseTotal;
-            window.currentServiceChargeAmount = isChecked ? serviceAmount : 0;
+        function updatePaymentTotal(baseTotal) {
+            const inputVal = document.getElementById('m-payment-service-input').value;
+            const serviceAmount = parseInt(inputVal) || 0;
+
+            window.currentPaymentTotal = baseTotal + serviceAmount;
+            window.currentServiceChargeAmount = serviceAmount;
 
             document.getElementById('payment-final-total').innerText = formatMoney(window.currentPaymentTotal);
             calculateChange();
