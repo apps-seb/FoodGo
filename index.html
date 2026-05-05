@@ -1,140 +1,229 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>RestoPro - Sistema Integral de Restaurante</title>
     <!-- Tailwind CSS para diseño profesional -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overscroll-behavior-y: none; }
-        
-        /* Utilidades Ocultar Scrollbar */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Animaciones */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        
-        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        .slide-in-right { animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        
-        @keyframes pulse-ring { 
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } 
-        }
-        .animate-pulse-ring { animation: pulse-ring 2s infinite; }
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-        /* Estilos Drag and Drop Plano */
-        .table-item { transition: transform 0.1s, box-shadow 0.2s; touch-action: none; user-select: none; }
-        .table-item:active { transform: scale(1.05); cursor: grabbing !important; }
-        .table-item.dragging { opacity: 0.9; z-index: 50; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-        
-        /* Grilla Fondo */
-        .floor-grid {
-            background-color: #f1f5f9;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
+      body { font-family: 'Inter', sans-serif; background-color: #fafafa; }
 
-        /* Tostadas Temporales */
-        .toast-notification { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .toast-notification.hide { opacity: 0; transform: translateX(120%); }
+      /* Utilidades Ocultar Scrollbar */
+      .hide-scrollbar::-webkit-scrollbar { display: none; }
+      .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Estilos Formularios */
-        .input-pro { w-full; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; background-color: #f8fafc; transition: all 0.2s; outline: none; }
-        .input-pro:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); background-color: #ffffff; }
+      /* Animaciones */
+      @keyframes bounce-short {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
+      }
+      .animate-bounce-short { animation: bounce-short 0.4s ease-in-out; }
+
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
+      @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      .slide-in-right { animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+      @keyframes pulse-ring {
+          0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+          70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+          100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+      }
+      .animate-pulse-ring { animation: pulse-ring 2s infinite; }
+
+      /* Estilos Drag and Drop Plano */
+      .table-item { transition: transform 0.1s, box-shadow 0.2s; touch-action: none; user-select: none; }
+      .table-item:active { transform: scale(1.05); cursor: grabbing !important; }
+      .table-item.dragging { opacity: 0.9; z-index: 50; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+
+      /* Grilla Fondo */
+      .floor-grid {
+          background-color: #f4f4f5;
+          background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+          background-size: 24px 24px;
+      }
+
+      /* Tostadas Temporales */
+      .toast-notification { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+      .toast-notification.hide { opacity: 0; transform: translateX(120%); }
+
+      /* Estilos Formularios */
+      .input-pro { w-full; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e4e4e7; background-color: #fafafa; transition: all 0.2s; outline: none; }
+      .input-pro:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); background-color: #ffffff; }
     </style>
-</head>
-<body class="h-screen w-full flex flex-col md:flex-row overflow-hidden text-slate-800">
-
+  </head>
+  <body
+    class="h-[100dvh] w-full flex flex-col md:flex-row overflow-hidden text-zinc-800"
+  >
     <!-- ESTADO GLOBAL -->
     <script>
-        const state = {
-            currentView: 'waiter', // admin, waiter, kitchen, cashier, sales
-            adminTab: 'tables',      // menu, inventory, staff
+      const state = {
+        currentView: "waiter", // admin, waiter, kitchen, cashier, sales
+        adminTab: "tables", // menu, inventory, staff
 
-            zones: ['Salón Principal', 'Terraza'],
-            adminZone: 'Salón Principal',
-            waiterZone: 'Salón Principal',
-            cashBase: 0,
-            
-            // Datos Estructurales Mejorados
-            tables: [
-                { id: 1, name: 'M1', x: 40, y: 40, status: 'free', zone: 'Salón Principal' },
-                { id: 2, name: 'M2', x: 160, y: 40, status: 'free', zone: 'Salón Principal' },
-                { id: 3, name: 'Terraza 1', x: 40, y: 160, status: 'free', zone: 'Terraza' }
-            ],
-            menu: [
-                { id: 1, name: 'Ceviche Mixto', price: 28000, cost: 15000, category: 'Entradas', tag: 'Sugerido' },
-                { id: 2, name: 'Churrasco 300g', price: 45000, cost: 25000, category: 'Almuerzos', tag: 'Recomendado' },
-                { id: 3, name: 'Salmón a la Plancha', price: 42000, cost: 20000, category: 'Almuerzos', tag: '' },
-                { id: 4, name: 'Limonada Cereza', price: 9000, cost: 3000, category: 'Bebidas', tag: 'Recomendado' },
-                { id: 5, name: 'Volcán de Chocolate', price: 15000, cost: 5000, category: 'Postres', tag: 'Sugerido' },
-                { id: 6, name: 'Empanadas (x3)', price: 12000, cost: 5000, category: 'Entradas', tag: '' },
-                { id: 7, name: 'Jugo Natural', price: 7000, cost: 2500, category: 'Bebidas', tag: '' }
-            ],
-            categories: ['Entradas', 'Almuerzos', 'Bebidas', 'Postres', 'Licores'],
-            inventory: [
-                { id: 1, name: 'Carne de Res', quantity: 50, unit: 'kg' },
-                { id: 2, name: 'Salmón Fresco', quantity: 20, unit: 'filetes' }
-            ],
-            staff: [
-                { id: 1, name: 'Juan Pérez', role: 'Mesero' },
-                { id: 2, name: 'María Gómez', role: 'Capitán' }
-            ],
-            orders: [], // Comandas
-            notifications: [], // { id, msg, type, time }
-            
-            // Estado UI y Paginación (Modulos 1 a 1)
-            selectedTableId: null,
-            cart: [],
-            isMobileMenuOpen: false,
-            isCartOpenOnMobile: false,
-            isNotifPanelOpen: false,
-            
-            // Paginaciones separadas por módulo
-            pagination: {
-                waiterMenu: { page: 1, itemsPerPage: 6, filter: 'Todas' },
-                adminMenu: { page: 1, itemsPerPage: 5 },
-                adminInventory: { page: 1, itemsPerPage: 5 },
-                adminStaff: { page: 1, itemsPerPage: 5 },
-                salesOrders: { page: 1, itemsPerPage: 5 }
-            }
+        zones: ["Salón Principal", "Terraza"],
+        adminZone: "Salón Principal",
+        waiterZone: "Salón Principal",
+        cashBase: 0,
+
+        // Datos Estructurales Mejorados
+        tables: [
+          {
+            id: 1,
+            name: "M1",
+            x: 40,
+            y: 40,
+            status: "free",
+            zone: "Salón Principal",
+          },
+          {
+            id: 2,
+            name: "M2",
+            x: 160,
+            y: 40,
+            status: "free",
+            zone: "Salón Principal",
+          },
+          {
+            id: 3,
+            name: "Terraza 1",
+            x: 40,
+            y: 160,
+            status: "free",
+            zone: "Terraza",
+          },
+        ],
+        menu: [
+          {
+            id: 1,
+            name: "Ceviche Mixto",
+            price: 28000,
+            cost: 15000,
+            category: "Entradas",
+            tag: "Sugerido",
+          },
+          {
+            id: 2,
+            name: "Churrasco 300g",
+            price: 45000,
+            cost: 25000,
+            category: "Almuerzos",
+            tag: "Recomendado",
+          },
+          {
+            id: 3,
+            name: "Salmón a la Plancha",
+            price: 42000,
+            cost: 20000,
+            category: "Almuerzos",
+            tag: "",
+          },
+          {
+            id: 4,
+            name: "Limonada Cereza",
+            price: 9000,
+            cost: 3000,
+            category: "Bebidas",
+            tag: "Recomendado",
+          },
+          {
+            id: 5,
+            name: "Volcán de Chocolate",
+            price: 15000,
+            cost: 5000,
+            category: "Postres",
+            tag: "Sugerido",
+          },
+          {
+            id: 6,
+            name: "Empanadas (x3)",
+            price: 12000,
+            cost: 5000,
+            category: "Entradas",
+            tag: "",
+          },
+          {
+            id: 7,
+            name: "Jugo Natural",
+            price: 7000,
+            cost: 2500,
+            category: "Bebidas",
+            tag: "",
+          },
+        ],
+        categories: ["Entradas", "Almuerzos", "Bebidas", "Postres", "Licores"],
+        inventory: [
+          { id: 1, name: "Carne de Res", quantity: 50, unit: "kg" },
+          { id: 2, name: "Salmón Fresco", quantity: 20, unit: "filetes" },
+        ],
+        staff: [
+          { id: 1, name: "Juan Pérez", role: "Mesero" },
+          { id: 2, name: "María Gómez", role: "Capitán" },
+        ],
+        orders: [], // Comandas
+        notifications: [], // { id, msg, type, time }
+
+        // Estado UI y Paginación (Modulos 1 a 1)
+        selectedTableId: null,
+        cart: [],
+        isMobileMenuOpen: false,
+        isCartOpenOnMobile: false,
+        isNotifPanelOpen: false,
+
+        // Paginaciones separadas por módulo
+        pagination: {
+          waiterMenu: { page: 1, itemsPerPage: 6, filter: "Todas" },
+          adminMenu: { page: 1, itemsPerPage: 5 },
+          adminInventory: { page: 1, itemsPerPage: 5 },
+          adminStaff: { page: 1, itemsPerPage: 5 },
+          salesOrders: { page: 1, itemsPerPage: 5 },
+        },
+      };
+
+      // --- SISTEMA DE NOTIFICACIONES (Historial + Toast) ---
+      function notify(msg, type = "success") {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("es-CO", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        // Guardar en historial
+        state.notifications.unshift({
+          id: Date.now(),
+          msg,
+          type,
+          time: timeStr,
+        });
+        if (state.notifications.length > 50) state.notifications.pop(); // Limite
+
+        // Actualizar vista si el panel está abierto o el badge de campana
+        renderHeaderBadges();
+        if (state.isNotifPanelOpen) renderNotificationPanel();
+
+        // Mostrar Toast temporal
+        const container = document.getElementById("toast-container");
+        const id = "toast-" + Date.now();
+
+        const colorMap = {
+          success: { bg: "bg-emerald-500", icon: "ph-check-circle" },
+          warning: { bg: "bg-amber-500", icon: "ph-warning" },
+          info: { bg: "bg-indigo-500", icon: "ph-info" },
+          error: { bg: "bg-red-500", icon: "ph-x-circle" },
         };
+        const c = colorMap[type];
 
-        // --- SISTEMA DE NOTIFICACIONES (Historial + Toast) ---
-        function notify(msg, type = 'success') {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
-            // Guardar en historial
-            state.notifications.unshift({ id: Date.now(), msg, type, time: timeStr });
-            if(state.notifications.length > 50) state.notifications.pop(); // Limite
-            
-            // Actualizar vista si el panel está abierto o el badge de campana
-            renderHeaderBadges();
-            if(state.isNotifPanelOpen) renderNotificationPanel();
-
-            // Mostrar Toast temporal
-            const container = document.getElementById('toast-container');
-            const id = 'toast-' + Date.now();
-            
-            const colorMap = {
-                'success': { bg: 'bg-emerald-500', icon: 'ph-check-circle' },
-                'warning': { bg: 'bg-amber-500', icon: 'ph-warning' },
-                'info': { bg: 'bg-blue-500', icon: 'ph-info' },
-                'error': { bg: 'bg-red-500', icon: 'ph-x-circle' }
-            };
-            const c = colorMap[type];
-            
-            const html = `
+        const html = `
                 <div id="${id}" class="toast-notification ${c.bg} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 slide-in-right pointer-events-auto border border-white/20">
                     <i class="${c.icon} text-xl shrink-0"></i>
                     <div class="flex flex-col">
@@ -143,368 +232,560 @@
                     </div>
                 </div>
             `;
-            container.insertAdjacentHTML('beforeend', html);
-            
-            setTimeout(() => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.add('hide');
-                    setTimeout(() => el.remove(), 400);
-                }
-            }, 4000);
+        container.insertAdjacentHTML("beforeend", html);
+
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.classList.add("hide");
+            setTimeout(() => el.remove(), 400);
+          }
+        }, 4000);
+      }
+
+      // --- RENDERIZADOR PRINCIPAL ---
+      function render() {
+        // Actualizar Botones Sidebar
+        document.querySelectorAll(".nav-btn").forEach((btn) => {
+          const isActive = btn.dataset.view === state.currentView;
+          btn.className = `nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 translate-x-2" : "text-zinc-400 hover:bg-zinc-800 hover:text-white"}`;
+        });
+
+        // Actualizar Bottom Menu Móvil
+        document.querySelectorAll(".bottom-nav-btn").forEach((btn) => {
+          const isActive = btn.dataset.bottomView === state.currentView;
+          const iconContainer = btn.querySelector(".icon-container");
+          const textSpan = btn.querySelector("span");
+          const icon = btn.querySelector("i");
+
+          if (isActive) {
+            btn.classList.add("text-indigo-600");
+            btn.classList.remove("text-zinc-400");
+            iconContainer.classList.add(
+              "bg-indigo-100",
+              "shadow-inner",
+              "-translate-y-2",
+            );
+            icon.classList.add("animate-bounce-short");
+            textSpan.classList.add(
+              "font-bold",
+              "opacity-100",
+              "text-indigo-700",
+            );
+          } else {
+            btn.classList.remove("text-indigo-600");
+            btn.classList.add("text-zinc-400");
+            iconContainer.classList.remove(
+              "bg-indigo-100",
+              "shadow-inner",
+              "-translate-y-2",
+            );
+            icon.classList.remove("animate-bounce-short");
+            textSpan.classList.remove(
+              "font-bold",
+              "opacity-100",
+              "text-indigo-700",
+            );
+          }
+        });
+
+        // Ocultar todas las vistas
+        [
+          "view-admin",
+          "view-waiter",
+          "view-kitchen",
+          "view-cashier",
+          "view-sales",
+        ].forEach((id) => {
+          document.getElementById(id).classList.add("hidden");
+        });
+
+        // Mostrar activa
+        const activeView = document.getElementById(`view-${state.currentView}`);
+        if (activeView) activeView.classList.remove("hidden");
+
+        // Renderizar contenido específico
+        if (state.currentView === "admin") renderAdmin();
+        if (state.currentView === "waiter") renderWaiter();
+        if (state.currentView === "kitchen") renderKitchen();
+        if (state.currentView === "cashier") renderCashier();
+        if (state.currentView === "sales") renderSales();
+
+        renderHeaderBadges();
+      }
+
+      // --- NAVEGACIÓN Y PANELES ---
+      function changeView(view, tab = null) {
+        state.currentView = view;
+        if (tab) state.adminTab = tab;
+        state.isMobileMenuOpen = false;
+        document
+          .getElementById("mobile-sidebar")
+          .classList.add("-translate-x-full");
+        document.getElementById("mobile-overlay").classList.add("hidden");
+        render();
+      }
+
+      function toggleMobileMenu() {
+        state.isMobileMenuOpen = !state.isMobileMenuOpen;
+        const sidebar = document.getElementById("mobile-sidebar");
+        const overlay = document.getElementById("mobile-overlay");
+        if (state.isMobileMenuOpen) {
+          sidebar.classList.remove("-translate-x-full");
+          overlay.classList.remove("hidden");
+        } else {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("hidden");
         }
+      }
 
-        // --- RENDERIZADOR PRINCIPAL ---
-        function render() {
-            // Actualizar Botones Sidebar
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                const isActive = btn.dataset.view === state.currentView;
-                btn.className = `nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`;
-            });
-
-            // Ocultar todas las vistas
-            ['view-admin', 'view-waiter', 'view-kitchen', 'view-cashier', 'view-sales'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-
-            // Mostrar activa
-            const activeView = document.getElementById(`view-${state.currentView}`);
-            if (activeView) activeView.classList.remove('hidden');
-
-            // Renderizar contenido específico
-            if (state.currentView === 'admin') renderAdmin();
-            if (state.currentView === 'waiter') renderWaiter();
-            if (state.currentView === 'kitchen') renderKitchen();
-            if (state.currentView === 'cashier') renderCashier();
-            if (state.currentView === 'sales') renderSales();
-            
-            renderHeaderBadges();
+      function toggleNotifPanel() {
+        state.isNotifPanelOpen = !state.isNotifPanelOpen;
+        const panel = document.getElementById("notif-panel");
+        const overlay = document.getElementById("notif-overlay");
+        if (state.isNotifPanelOpen) {
+          panel.classList.remove("translate-x-full");
+          overlay.classList.remove("hidden");
+          renderNotificationPanel();
+        } else {
+          panel.classList.add("translate-x-full");
+          overlay.classList.add("hidden");
         }
+      }
 
-        // --- NAVEGACIÓN Y PANELES ---
-        function changeView(view, tab = null) {
-            state.currentView = view;
-            if (tab) state.adminTab = tab;
-            state.isMobileMenuOpen = false;
-            document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
-            document.getElementById('mobile-overlay').classList.add('hidden');
-            render();
-        }
-
-        function toggleMobileMenu() {
-            state.isMobileMenuOpen = !state.isMobileMenuOpen;
-            const sidebar = document.getElementById('mobile-sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-            if (state.isMobileMenuOpen) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function toggleNotifPanel() {
-            state.isNotifPanelOpen = !state.isNotifPanelOpen;
-            const panel = document.getElementById('notif-panel');
-            const overlay = document.getElementById('notif-overlay');
-            if (state.isNotifPanelOpen) {
-                panel.classList.remove('translate-x-full');
-                overlay.classList.remove('hidden');
-                renderNotificationPanel();
-            } else {
-                panel.classList.add('translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function renderHeaderBadges() {
-            const bells = document.querySelectorAll('.notif-badge');
-            const count = state.notifications.length;
-            bells.forEach(b => {
-                b.innerHTML = count > 0 ? `<span class="absolute 0 top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-slate-900 rounded-full animate-pulse"></span>` : '';
-            });
-        }
+      function renderHeaderBadges() {
+        const bells = document.querySelectorAll(".notif-badge");
+        const count = state.notifications.length;
+        bells.forEach((b) => {
+          b.innerHTML =
+            count > 0
+              ? `<span class="absolute 0 top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-zinc-900 rounded-full animate-pulse"></span>`
+              : "";
+        });
+      }
     </script>
 
     <!-- === CONTENEDORES FLOTANTES === -->
-    <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
-    <div id="modal-root" class="fixed inset-0 z-[150] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"></div>
+    <div
+      id="toast-container"
+      class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+    ></div>
+    <div
+      id="modal-root"
+      class="fixed inset-0 z-[150] hidden items-center justify-center bg-zinc-900/60 backdrop-blur-sm px-4"
+    ></div>
 
     <!-- === PANEL LATERAL DE NOTIFICACIONES === -->
-    <div id="notif-overlay" onclick="toggleNotifPanel()" class="hidden fixed inset-0 bg-slate-900/40 z-[90] backdrop-blur-sm transition-opacity"></div>
-    <div id="notif-panel" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-[95] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-        <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                <i class="ph-fill ph-bell-ringing text-blue-500 text-xl"></i> Registro de Actividad
-            </h3>
-            <button onclick="toggleNotifPanel()" class="p-2 bg-white rounded-full hover:bg-slate-200 text-slate-500 shadow-sm transition-colors">
-                <i class="ph ph-x"></i>
-            </button>
-        </div>
-        <div id="notif-list" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
-            <!-- Renderizado por JS -->
-        </div>
+    <div
+      id="notif-overlay"
+      onclick="toggleNotifPanel()"
+      class="hidden fixed inset-0 bg-zinc-900/40 z-[90] backdrop-blur-sm transition-opacity"
+    ></div>
+    <div
+      id="notif-panel"
+      class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-[95] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col"
+    >
+      <div
+        class="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50"
+      >
+        <h3 class="font-bold text-lg text-zinc-800 flex items-center gap-2">
+          <i class="ph-fill ph-bell-ringing text-indigo-500 text-xl"></i>
+          Registro de Actividad
+        </h3>
+        <button
+          onclick="toggleNotifPanel()"
+          class="p-2 bg-white rounded-full hover:bg-zinc-200 text-zinc-500 shadow-sm transition-colors"
+        >
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div
+        id="notif-list"
+        class="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-50"
+      >
+        <!-- Renderizado por JS -->
+      </div>
     </div>
 
     <!-- === HEADER MÓVIL === -->
-    <div class="md:hidden flex items-center justify-between bg-slate-900 text-white p-4 shadow-lg z-30 w-full shrink-0 relative">
-        <div class="flex items-center gap-3">
-            <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg active:bg-slate-700 transition">
-                <i class="ph ph-list text-2xl"></i>
-            </button>
-            <h1 class="text-xl font-black flex items-center gap-2 tracking-tight">
-                <i class="ph-fill ph-chef-hat text-blue-500 text-2xl"></i> RestoPro
-            </h1>
-        </div>
-        <button onclick="toggleNotifPanel()" class="p-2 text-slate-300 hover:text-white relative">
-            <i class="ph ph-bell text-2xl"></i>
-            <div class="notif-badge"></div>
-        </button>
+    <div
+      class="md:hidden flex items-center justify-between bg-zinc-900 text-white p-4 shadow-lg z-30 w-full shrink-0 relative"
+    >
+      <div class="flex items-center gap-3">
+        <h1
+          class="text-xl font-extrabold flex items-center gap-2 tracking-tight"
+        >
+          <i class="ph-fill ph-chef-hat text-indigo-500 text-2xl"></i> RestoPro
+        </h1>
+      </div>
+      <button
+        onclick="toggleNotifPanel()"
+        class="p-2 text-zinc-300 hover:text-white relative"
+      >
+        <i class="ph ph-bell text-2xl"></i>
+        <div class="notif-badge"></div>
+      </button>
     </div>
 
     <!-- === SIDEBAR PRINCIPAL === -->
-    <div id="mobile-overlay" class="hidden md:hidden fixed inset-0 bg-slate-900/60 z-30 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
-    
-    <div id="mobile-sidebar" class="
-        fixed inset-y-0 left-0 transform -translate-x-full
-        md:relative md:translate-x-0 transition-transform duration-300 ease-in-out z-40
-        w-72 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 shadow-2xl border-r border-slate-800
-    ">
-        <div class="p-6 border-b border-slate-800 hidden md:flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
-                    <i class="ph-fill ph-chef-hat text-blue-500"></i> RestoPro
-                </h1>
-                <p class="text-xs text-slate-500 mt-1 font-medium">Sistema Premium v3.0</p>
-            </div>
-            <button onclick="toggleNotifPanel()" class="p-2 text-slate-400 hover:text-white relative hover:bg-slate-800 rounded-lg transition-colors">
-                <i class="ph-fill ph-bell text-xl"></i>
-                <div class="notif-badge"></div>
-            </button>
-        </div>
+    <div
+      id="mobile-overlay"
+      class="hidden md:hidden fixed inset-0 bg-zinc-900/60 z-30 backdrop-blur-sm"
+      onclick="toggleMobileMenu()"
+    ></div>
 
-        <div class="p-4 flex-1 flex flex-col gap-2 overflow-y-auto mt-16 md:mt-0 hide-scrollbar">
-            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 mt-2 px-2">Punto de Venta</div>
-            <button onclick="changeView('waiter')" data-view="waiter" class="nav-btn">
-                <i class="ph-fill ph-note-pencil text-xl"></i> Toma de Pedidos
-            </button>
-            <button onclick="changeView('kitchen')" data-view="kitchen" class="nav-btn">
-                <i class="ph-fill ph-cooking-pot text-xl"></i> Monitor Cocina (KDS)
-            </button>
-            <button onclick="changeView('cashier')" data-view="cashier" class="nav-btn">
-                <i class="ph-fill ph-cash-register text-xl"></i> Caja y Pagos
-            </button>
+    <div
+      id="mobile-sidebar"
+      class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out z-40 w-72 bg-zinc-900 text-zinc-300 flex flex-col flex-shrink-0 shadow-2xl border-r border-zinc-800"
+    >
+      <div
+        class="p-6 border-b border-zinc-800 hidden md:flex items-center justify-between"
+      >
+        <div>
+          <h1
+            class="text-2xl font-extrabold text-white flex items-center gap-2 tracking-tight"
+          >
+            <i class="ph-fill ph-chef-hat text-indigo-500"></i> RestoPro
+          </h1>
+          <p class="text-xs text-zinc-500 mt-1 font-medium">
+            Sistema Premium v3.0
+          </p>
+        </div>
+        <button
+          onclick="toggleNotifPanel()"
+          class="p-2 text-zinc-400 hover:text-white relative hover:bg-zinc-800 rounded-lg transition-colors"
+        >
+          <i class="ph-fill ph-bell text-xl"></i>
+          <div class="notif-badge"></div>
+        </button>
+      </div>
 
-            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 mt-6 px-2">Gestión y Ajustes</div>
-            <button onclick="changeView('sales')" data-view="sales" class="nav-btn">
-                <i class="ph-fill ph-chart-line-up text-xl"></i> Ventas
-            </button>
-            <button onclick="changeView('admin', 'menu')" data-view="admin" class="nav-btn">
-                <i class="ph-fill ph-gear text-xl"></i> Administración
-            </button>
+      <div
+        class="p-4 flex-1 flex flex-col gap-2 overflow-y-auto mt-16 md:mt-0 hide-scrollbar"
+      >
+        <div
+          class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 mt-2 px-2"
+        >
+          Punto de Venta
         </div>
-        
-        <div class="p-5 border-t border-slate-800 flex justify-between items-center bg-slate-950/50 mt-auto">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">A</div>
-                <div class="flex flex-col">
-                    <span class="text-sm font-semibold text-white">Admin Central</span>
-                    <span class="text-[10px] text-emerald-400 flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div> En línea</span>
-                </div>
-            </div>
+        <button
+          onclick="changeView('waiter')"
+          data-view="waiter"
+          class="nav-btn"
+        >
+          <i class="ph-fill ph-note-pencil text-xl"></i> Toma de Pedidos
+        </button>
+        <button
+          onclick="changeView('kitchen')"
+          data-view="kitchen"
+          class="nav-btn"
+        >
+          <i class="ph-fill ph-cooking-pot text-xl"></i> Monitor Cocina (KDS)
+        </button>
+        <button
+          onclick="changeView('cashier')"
+          data-view="cashier"
+          class="nav-btn"
+        >
+          <i class="ph-fill ph-cash-register text-xl"></i> Caja y Pagos
+        </button>
+
+        <div
+          class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 mt-6 px-2"
+        >
+          Gestión y Ajustes
         </div>
+        <button onclick="changeView('sales')" data-view="sales" class="nav-btn">
+          <i class="ph-fill ph-chart-line-up text-xl"></i> Ventas
+        </button>
+        <button
+          onclick="changeView('admin', 'menu')"
+          data-view="admin"
+          class="nav-btn"
+        >
+          <i class="ph-fill ph-gear text-xl"></i> Administración
+        </button>
+      </div>
+
+      <div
+        class="p-5 border-t border-zinc-800 flex justify-between items-center bg-zinc-950/50 mt-auto"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm"
+          >
+            A
+          </div>
+          <div class="flex flex-col">
+            <span class="text-sm font-semibold text-white">Admin Central</span>
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1"
+              ><div
+                class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
+              ></div>
+              En línea</span
+            >
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- === CONTENEDOR VISTAS === -->
-    <div class="flex-1 overflow-hidden relative flex flex-col w-full bg-slate-50">
-        
-        <!-- VISTA: VENTAS -->
-        <div id="view-sales" class="hidden h-full flex flex-col w-full bg-slate-50 overflow-y-auto"></div>
+    <div
+      class="flex-1 overflow-hidden relative flex flex-col w-full bg-zinc-50 pb-[80px] md:pb-0"
+    >
+      <!-- VISTA: VENTAS -->
+      <div
+        id="view-sales"
+        class="hidden h-full flex flex-col w-full bg-zinc-50 overflow-y-auto"
+      ></div>
 
-        <!-- VISTA: ADMINISTRACIÓN -->
-        <div id="view-admin" class="hidden h-full flex flex-col">
-            <div class="bg-white border-b border-slate-200 px-4 py-3 flex gap-2 overflow-x-auto hide-scrollbar shrink-0 shadow-sm z-10">
-                <button onclick="changeAdminTab('tables')" id="tab-btn-tables" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Plano de Mesas</button>
-                <button onclick="changeAdminTab('menu')" id="tab-btn-menu" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Menú y Platos</button>
-                <button onclick="changeAdminTab('inventory')" id="tab-btn-inventory" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Inventario</button>
-                <button onclick="changeAdminTab('staff')" id="tab-btn-staff" class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Personal</button>
+      <!-- VISTA: ADMINISTRACIÓN -->
+      <div id="view-admin" class="hidden h-full flex flex-col">
+        <div
+          class="bg-white border-b border-zinc-200 px-4 py-3 flex gap-2 overflow-x-auto hide-scrollbar shrink-0 shadow-sm z-10"
+        >
+          <button
+            onclick="changeAdminTab('tables')"
+            id="tab-btn-tables"
+            class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+          >
+            Plano de Mesas
+          </button>
+          <button
+            onclick="changeAdminTab('menu')"
+            id="tab-btn-menu"
+            class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+          >
+            Menú y Platos
+          </button>
+          <button
+            onclick="changeAdminTab('inventory')"
+            id="tab-btn-inventory"
+            class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+          >
+            Inventario
+          </button>
+          <button
+            onclick="changeAdminTab('staff')"
+            id="tab-btn-staff"
+            class="admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+          >
+            Personal
+          </button>
+        </div>
+        <div
+          class="flex-1 overflow-y-auto relative bg-zinc-50/50"
+          id="admin-content-area"
+        ></div>
+      </div>
+
+      <!-- VISTA: MESERO -->
+      <div id="view-waiter" class="hidden h-full flex flex-col w-full"></div>
+
+      <!-- VISTA: COCINA -->
+      <div
+        id="view-kitchen"
+        class="hidden h-full flex flex-col bg-[#18181b] p-4 sm:p-6 overflow-y-auto"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h2
+            class="text-2xl sm:text-3xl font-extrabold flex items-center gap-3 text-white tracking-tight"
+          >
+            <div class="p-2.5 bg-amber-500/20 rounded-xl text-amber-500">
+              <i class="ph-fill ph-cooking-pot"></i>
             </div>
-            <div class="flex-1 overflow-hidden relative bg-slate-50/50" id="admin-content-area"></div>
+            Monitor KDS
+          </h2>
+          <div
+            class="text-zinc-400 text-sm font-medium flex items-center gap-2"
+          >
+            <i class="ph ph-clock"></i> <span id="kitchen-clock">--:--</span>
+          </div>
         </div>
+        <div
+          id="kitchen-tickets-container"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-20"
+        ></div>
+      </div>
 
-        <!-- VISTA: MESERO -->
-        <div id="view-waiter" class="hidden h-full flex flex-col w-full"></div>
-
-        <!-- VISTA: COCINA -->
-        <div id="view-kitchen" class="hidden h-full flex flex-col bg-[#0f172a] p-4 sm:p-6 overflow-y-auto">
-             <div class="flex justify-between items-center mb-6">
-                 <h2 class="text-2xl sm:text-3xl font-black flex items-center gap-3 text-white tracking-tight">
-                    <div class="p-2.5 bg-amber-500/20 rounded-xl text-amber-500"><i class="ph-fill ph-cooking-pot"></i></div> Monitor KDS
-                 </h2>
-                 <div class="text-slate-400 text-sm font-medium flex items-center gap-2">
-                     <i class="ph ph-clock"></i> <span id="kitchen-clock">--:--</span>
-                 </div>
-             </div>
-            <div id="kitchen-tickets-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-20"></div>
-        </div>
-
-        <!-- VISTA: CAJA -->
-        <div id="view-cashier" class="hidden h-full flex flex-col p-4 sm:p-6 overflow-y-auto">
-            <h2 class="text-2xl sm:text-3xl font-black text-slate-800 mb-6 flex items-center gap-3 tracking-tight">
-                <div class="bg-emerald-100 p-2.5 rounded-xl text-emerald-600"><i class="ph-fill ph-cash-register"></i></div> Punto de Cobro
-            </h2>
-            <div id="cashier-tickets-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-20"></div>
-        </div>
-
+      <!-- VISTA: CAJA -->
+      <div
+        id="view-cashier"
+        class="hidden h-full flex flex-col p-4 sm:p-6 overflow-y-auto"
+      >
+        <h2
+          class="text-2xl sm:text-3xl font-extrabold text-zinc-800 mb-6 flex items-center gap-3 tracking-tight"
+        >
+          <div class="bg-emerald-100 p-2.5 rounded-xl text-emerald-600">
+            <i class="ph-fill ph-cash-register"></i>
+          </div>
+          Punto de Cobro
+        </h2>
+        <div
+          id="cashier-tickets-container"
+          class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-20"
+        ></div>
+      </div>
     </div>
 
     <!-- ========================================== -->
     <!-- LOGICA JAVASCRIPT PRINCIPAL                -->
     <!-- ========================================== -->
     <script>
-        // --- HELPERS & COMPONENTES UI ---
-        const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
-        
-        const getTagBadgeHTML = (tag) => {
-            if (!tag) return '';
-            const isRec = tag === 'Recomendado';
-            return `<span class="text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-bold border shadow-sm ${isRec ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-purple-100 text-purple-700 border-purple-200'} flex items-center gap-1 w-fit"><i class="ph-fill ${isRec ? 'ph-star' : 'ph-sparkle'}"></i> ${tag}</span>`;
-        };
+      // --- HELPERS & COMPONENTES UI ---
+      const formatMoney = (amount) =>
+        new Intl.NumberFormat("es-CO", {
+          style: "currency",
+          currency: "COP",
+          maximumFractionDigits: 0,
+        }).format(amount);
 
-        // Paginación 1 a 1 (+ / -) requerida por el usuario
-        const getPaginationHTML = (stateObjPath, totalItems) => {
-            // stateObjPath es un string como 'adminMenu'
-            const pagState = state.pagination[stateObjPath];
-            const totalPages = Math.ceil(totalItems / pagState.itemsPerPage) || 1;
-            
-            // Auto corregir si la página actual supera el máximo por borrado
-            if (pagState.page > totalPages) pagState.page = totalPages;
-            if (pagState.page < 1) pagState.page = 1;
+      const getTagBadgeHTML = (tag) => {
+        if (!tag) return "";
+        const isRec = tag === "Recomendado";
+        return `<span class="text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-bold border shadow-sm ${isRec ? "bg-amber-100 text-amber-700 border-amber-200" : "bg-purple-100 text-purple-700 border-purple-200"} flex items-center gap-1 w-fit"><i class="ph-fill ${isRec ? "ph-star" : "ph-sparkle"}"></i> ${tag}</span>`;
+      };
 
-            return `
-                <div class="flex items-center justify-center gap-3 mt-6 p-2 bg-white rounded-2xl shadow-sm border border-slate-200 w-fit mx-auto transition-all">
-                    <button onclick="changePage('${stateObjPath}', -1)" ${pagState.page <= 1 ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 disabled:opacity-40 transition-colors active:scale-95 border border-slate-200">
+      // Paginación 1 a 1 (+ / -) requerida por el usuario
+      const getPaginationHTML = (stateObjPath, totalItems) => {
+        // stateObjPath es un string como 'adminMenu'
+        const pagState = state.pagination[stateObjPath];
+        const totalPages = Math.ceil(totalItems / pagState.itemsPerPage) || 1;
+
+        // Auto corregir si la página actual supera el máximo por borrado
+        if (pagState.page > totalPages) pagState.page = totalPages;
+        if (pagState.page < 1) pagState.page = 1;
+
+        return `
+                <div class="flex items-center justify-center gap-3 mt-6 p-2 bg-white rounded-2xl shadow-sm border border-zinc-200 w-fit mx-auto transition-all">
+                    <button onclick="changePage('${stateObjPath}', -1)" ${pagState.page <= 1 ? "disabled" : ""} class="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-600 disabled:opacity-40 transition-colors active:scale-95 border border-zinc-200">
                         <i class="ph-bold ph-minus text-lg"></i>
                     </button>
                     <div class="flex flex-col items-center px-4 min-w-[80px]">
-                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Página</span>
-                        <span class="font-black text-slate-800 text-lg leading-tight">${pagState.page} <span class="text-slate-400 text-sm font-medium">/ ${totalPages}</span></span>
+                        <span class="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Página</span>
+                        <span class="font-extrabold text-zinc-800 text-lg leading-tight">${pagState.page} <span class="text-zinc-400 text-sm font-medium">/ ${totalPages}</span></span>
                     </div>
-                    <button onclick="changePage('${stateObjPath}', 1)" ${pagState.page >= totalPages ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 disabled:opacity-40 transition-colors active:scale-95 border border-slate-200">
+                    <button onclick="changePage('${stateObjPath}', 1)" ${pagState.page >= totalPages ? "disabled" : ""} class="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-600 disabled:opacity-40 transition-colors active:scale-95 border border-zinc-200">
                         <i class="ph-bold ph-plus text-lg"></i>
                     </button>
                 </div>
             `;
-        };
+      };
 
-        function changePage(module, delta) {
-            state.pagination[module].page += delta;
-            render(); // Rerenderiza la vista actual
+      function changePage(module, delta) {
+        state.pagination[module].page += delta;
+        render(); // Rerenderiza la vista actual
+      }
+
+      function renderNotificationPanel() {
+        const container = document.getElementById("notif-list");
+        if (state.notifications.length === 0) {
+          container.innerHTML = `<div class="text-center py-10 text-zinc-400 flex flex-col items-center"><i class="ph ph-bell-slash text-4xl mb-2 opacity-50"></i><p class="text-sm">No hay notificaciones recientes</p></div>`;
+          return;
         }
 
-        function renderNotificationPanel() {
-            const container = document.getElementById('notif-list');
-            if (state.notifications.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 text-slate-400 flex flex-col items-center"><i class="ph ph-bell-slash text-4xl mb-2 opacity-50"></i><p class="text-sm">No hay notificaciones recientes</p></div>`;
-                return;
-            }
+        container.innerHTML = state.notifications
+          .map((n) => {
+            const colors = {
+              success: "bg-emerald-100 text-emerald-600 border-emerald-200",
+              warning: "bg-amber-100 text-amber-600 border-amber-200",
+              info: "bg-indigo-100 text-indigo-600 border-indigo-200",
+              error: "bg-red-100 text-red-600 border-red-200",
+            }[n.type];
 
-            container.innerHTML = state.notifications.map(n => {
-                const colors = {
-                    'success': 'bg-emerald-100 text-emerald-600 border-emerald-200',
-                    'warning': 'bg-amber-100 text-amber-600 border-amber-200',
-                    'info': 'bg-blue-100 text-blue-600 border-blue-200',
-                    'error': 'bg-red-100 text-red-600 border-red-200'
-                }[n.type];
-                
-                const icon = {
-                    'success': 'ph-check-circle', 'warning': 'ph-warning', 'info': 'ph-info', 'error': 'ph-x-circle'
-                }[n.type];
+            const icon = {
+              success: "ph-check-circle",
+              warning: "ph-warning",
+              info: "ph-info",
+              error: "ph-x-circle",
+            }[n.type];
 
-                return `
-                    <div class="p-3 bg-white border border-slate-100 rounded-xl shadow-sm flex items-start gap-3 animate-fade-in">
+            return `
+                    <div class="p-3 bg-white border border-zinc-100 rounded-xl shadow-sm flex items-start gap-3 animate-fade-in">
                         <div class="p-2 rounded-lg ${colors} shrink-0"><i class="ph-fill ${icon} text-lg"></i></div>
                         <div class="flex flex-col flex-1">
-                            <span class="text-sm font-medium text-slate-800 leading-tight">${n.msg}</span>
-                            <span class="text-[10px] font-bold text-slate-400 mt-1">${n.time}</span>
+                            <span class="text-sm font-medium text-zinc-800 leading-tight">${n.msg}</span>
+                            <span class="text-[10px] font-bold text-zinc-400 mt-1">${n.time}</span>
                         </div>
                     </div>
                 `;
-            }).join('');
-        }
+          })
+          .join("");
+      }
 
-        // ==========================================
-        // SISTEMA DE MODALES (Reemplazo de Prompts)
-        // ==========================================
-        function openModal(htmlContent) {
-            const root = document.getElementById('modal-root');
-            root.innerHTML = `
+      // ==========================================
+      // SISTEMA DE MODALES (Reemplazo de Prompts)
+      // ==========================================
+      function openModal(htmlContent) {
+        const root = document.getElementById("modal-root");
+        root.innerHTML = `
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-fade-in">
                     ${htmlContent}
                 </div>
             `;
-            root.classList.remove('hidden');
-            root.classList.add('flex');
-        }
+        root.classList.remove("hidden");
+        root.classList.add("flex");
+      }
 
-        function closeModal() {
-            const root = document.getElementById('modal-root');
-            root.classList.add('hidden');
-            root.classList.remove('flex');
-            root.innerHTML = '';
-        }
+      function closeModal() {
+        const root = document.getElementById("modal-root");
+        root.classList.add("hidden");
+        root.classList.remove("flex");
+        root.innerHTML = "";
+      }
 
-        // Formularios de Modales
-        function modalAddTable() {
-            openModal(`
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="font-bold text-lg text-slate-800">Agregar Nueva Mesa</h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+      // Formularios de Modales
+      function modalAddTable() {
+        openModal(`
+                <div class="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
+                    <h3 class="font-bold text-lg text-zinc-800">Agregar Nueva Mesa</h3>
+                    <button onclick="closeModal()" class="text-zinc-400 hover:text-zinc-600"><i class="ph ph-x text-xl"></i></button>
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre o Número</label>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Nombre o Número</label>
                         <input type="text" id="m-table-name" class="input-pro" placeholder="Ej: Mesa 4, VIP 1..." autocomplete="off">
                     </div>
-                    <button onclick="saveTable()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-colors">Crear Mesa</button>
+                    <button onclick="saveTable()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-colors">Crear Mesa</button>
                 </div>
             `);
-            setTimeout(() => document.getElementById('m-table-name').focus(), 50);
-        }
+        setTimeout(() => document.getElementById("m-table-name").focus(), 50);
+      }
 
-        function modalAddMenu() {
-            const cats = state.categories.map(c => `<option value="${c}">${c}</option>`).join('');
-            openModal(`
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="font-bold text-lg text-slate-800">Registrar Plato / Producto</h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+      function modalAddMenu() {
+        const cats = state.categories
+          .map((c) => `<option value="${c}">${c}</option>`)
+          .join("");
+        openModal(`
+                <div class="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
+                    <h3 class="font-bold text-lg text-zinc-800">Registrar Plato / Producto</h3>
+                    <button onclick="closeModal()" class="text-zinc-400 hover:text-zinc-600"><i class="ph ph-x text-xl"></i></button>
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre del Producto</label>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Nombre del Producto</label>
                         <input type="text" id="m-menu-name" class="input-pro" placeholder="Ej: Hamburguesa Sencilla">
                     </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Costo (COP)</label>
+                            <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Costo (COP)</label>
                             <input type="number" id="m-menu-cost" class="input-pro" placeholder="Ej: 15000">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Precio (COP)</label>
+                            <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Precio (COP)</label>
                             <input type="number" id="m-menu-price" class="input-pro" placeholder="Ej: 25000">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Categoría</label>
+                            <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Categoría</label>
                             <select id="m-menu-cat" class="input-pro cursor-pointer">${cats}</select>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Etiqueta Especial</label>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-2">Etiqueta Especial</label>
                         <div class="flex gap-3">
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="m-menu-tag" value="" class="peer hidden" checked>
-                                <div class="text-center py-2 border border-slate-200 rounded-xl peer-checked:bg-slate-800 peer-checked:text-white peer-checked:border-slate-800 transition-all text-sm font-medium text-slate-600">Ninguna</div>
+                                <div class="text-center py-2 border border-zinc-200 rounded-xl peer-checked:bg-zinc-800 peer-checked:text-white peer-checked:border-zinc-800 transition-all text-sm font-medium text-zinc-600">Ninguna</div>
                             </label>
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" name="m-menu-tag" value="Recomendado" class="peer hidden">
@@ -516,235 +797,272 @@
                             </label>
                         </div>
                     </div>
-                    <button onclick="saveMenu()" class="w-full mt-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-colors">Guardar Producto</button>
+                    <button onclick="saveMenu()" class="w-full mt-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-colors">Guardar Producto</button>
                 </div>
             `);
-        }
+      }
 
-        function modalConfirmDelete(type, id, name) {
-            openModal(`
+      function modalConfirmDelete(type, id, name) {
+        openModal(`
                 <div class="p-6 flex flex-col items-center text-center">
                     <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
                         <i class="ph-fill ph-warning text-3xl"></i>
                     </div>
-                    <h3 class="font-bold text-xl text-slate-800 mb-2">¿Eliminar registro?</h3>
-                    <p class="text-slate-500 text-sm mb-6">Estás a punto de eliminar <b>${name}</b>. Esta acción no se puede deshacer.</p>
+                    <h3 class="font-bold text-xl text-zinc-800 mb-2">¿Eliminar registro?</h3>
+                    <p class="text-zinc-500 text-sm mb-6">Estás a punto de eliminar <b>${name}</b>. Esta acción no se puede deshacer.</p>
                     <div class="flex gap-3 w-full">
-                        <button onclick="closeModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors">Cancelar</button>
+                        <button onclick="closeModal()" class="flex-1 py-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold rounded-xl transition-colors">Cancelar</button>
                         <button onclick="executeDelete('${type}', ${id})" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-red-500/30">Eliminar</button>
                     </div>
                 </div>
             `);
-        }
+      }
 
-        // Lógica de Guardado Modales
-        function saveTable() {
-            const name = document.getElementById('m-table-name').value.trim();
-            if(!name) return notify("Ingresa un nombre para la mesa", "warning");
-            const id = state.tables.length > 0 ? Math.max(...state.tables.map(t => t.id)) + 1 : 1;
-            state.tables.push({ id, name, x: 20, y: 20, status: 'free', zone: state.adminZone });
-            closeModal();
-            renderAdmin();
-            notify(`Mesa '${name}' creada con éxito`, 'success');
-        }
+      // Lógica de Guardado Modales
+      function saveTable() {
+        const name = document.getElementById("m-table-name").value.trim();
+        if (!name) return notify("Ingresa un nombre para la mesa", "warning");
+        const id =
+          state.tables.length > 0
+            ? Math.max(...state.tables.map((t) => t.id)) + 1
+            : 1;
+        state.tables.push({
+          id,
+          name,
+          x: 20,
+          y: 20,
+          status: "free",
+          zone: state.adminZone,
+        });
+        closeModal();
+        renderAdmin();
+        notify(`Mesa '${name}' creada con éxito`, "success");
+      }
 
-        function saveMenu() {
-            const name = document.getElementById('m-menu-name').value.trim();
-            const price = parseInt(document.getElementById('m-menu-price').value);
-            const cost = parseInt(document.getElementById('m-menu-cost').value) || 0;
-            const category = document.getElementById('m-menu-cat').value;
-            const tag = document.querySelector('input[name="m-menu-tag"]:checked').value;
+      function saveMenu() {
+        const name = document.getElementById("m-menu-name").value.trim();
+        const price = parseInt(document.getElementById("m-menu-price").value);
+        const cost =
+          parseInt(document.getElementById("m-menu-cost").value) || 0;
+        const category = document.getElementById("m-menu-cat").value;
+        const tag = document.querySelector(
+          'input[name="m-menu-tag"]:checked',
+        ).value;
 
-            if(!name || !price) return notify("Completa los campos obligatorios", "warning");
-            
-            const id = state.menu.length > 0 ? Math.max(...state.menu.map(i=>i.id))+1 : 1;
-            state.menu.unshift({id, name, price, cost, category, tag}); // Agregar al inicio
-            closeModal();
-            renderAdmin();
-            notify(`Producto '${name}' guardado`, 'success');
-        }
+        if (!name || !price)
+          return notify("Completa los campos obligatorios", "warning");
 
-        function executeDelete(type, id) {
-            state[type] = state[type].filter(item => item.id !== id);
-            closeModal();
-            renderAdmin();
-            notify("Registro eliminado correctamente", "info");
-        }
+        const id =
+          state.menu.length > 0
+            ? Math.max(...state.menu.map((i) => i.id)) + 1
+            : 1;
+        state.menu.unshift({ id, name, price, cost, category, tag }); // Agregar al inicio
+        closeModal();
+        renderAdmin();
+        notify(`Producto '${name}' guardado`, "success");
+      }
 
+      function executeDelete(type, id) {
+        state[type] = state[type].filter((item) => item.id !== id);
+        closeModal();
+        renderAdmin();
+        notify("Registro eliminado correctamente", "info");
+      }
 
-        // ==========================================
-        // MÓDULO DE VENTAS
-        // ==========================================
-        function renderSales() {
-            const container = document.getElementById('view-sales');
-            const paidOrders = state.orders.filter(o => o.status === 'paid');
+      // ==========================================
+      // MÓDULO DE VENTAS
+      // ==========================================
+      function renderSales() {
+        const container = document.getElementById("view-sales");
+        const paidOrders = state.orders.filter((o) => o.status === "paid");
 
-            let totalSales = 0;
-            let totalService = 0;
-            let cashInRegister = state.cashBase; // Start with the cash base
-            let totalProfit = 0;
-            let totalItemsSold = 0;
+        let totalSales = 0;
+        let totalService = 0;
+        let cashInRegister = state.cashBase; // Start with the cash base
+        let totalProfit = 0;
+        let totalItemsSold = 0;
 
-            paidOrders.forEach(o => {
-                totalSales += o.subtotal;
-                totalService += (o.serviceCharge || 0);
-                if (o.paymentMethod === 'efectivo') {
-                    // Only add the cash received for the specific order.
-                    // Assuming finalTotal already includes service charge if paid in cash.
-                    // And cashReceived - change = finalTotal
-                    cashInRegister += o.finalTotal;
-                }
-                totalProfit += (o.profit || 0);
-                totalItemsSold += o.items.reduce((acc, item) => acc + item.quantity, 0);
-            });
+        paidOrders.forEach((o) => {
+          totalSales += o.subtotal;
+          totalService += o.serviceCharge || 0;
+          if (o.paymentMethod === "efectivo") {
+            // Only add the cash received for the specific order.
+            // Assuming finalTotal already includes service charge if paid in cash.
+            // And cashReceived - change = finalTotal
+            cashInRegister += o.finalTotal;
+          }
+          totalProfit += o.profit || 0;
+          totalItemsSold += o.items.reduce(
+            (acc, item) => acc + item.quantity,
+            0,
+          );
+        });
 
-            const pag = state.pagination.salesOrders;
-            const start = (pag.page - 1) * pag.itemsPerPage;
-            const visible = paidOrders.slice(start, start + pag.itemsPerPage);
+        const pag = state.pagination.salesOrders;
+        const start = (pag.page - 1) * pag.itemsPerPage;
+        const visible = paidOrders.slice(start, start + pag.itemsPerPage);
 
-            container.innerHTML = `
+        container.innerHTML = `
                 <div class="p-4 sm:p-6 h-full flex flex-col w-full">
-                    <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                        <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                            <div class="p-2 bg-blue-100 rounded-lg text-blue-600"><i class="ph-fill ph-chart-line-up"></i></div>
+                    <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-zinc-200">
+                        <h2 class="text-2xl font-extrabold text-zinc-800 tracking-tight flex items-center gap-2">
+                            <div class="p-2 bg-indigo-100 rounded-lg text-indigo-600"><i class="ph-fill ph-chart-line-up"></i></div>
                             Panel de Ventas
                         </h2>
-                        <button onclick="modalSetCashBase()" class="bg-slate-100 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-xl font-bold transition-colors text-sm flex items-center gap-2 shadow-sm border border-slate-200">
+                        <button onclick="modalSetCashBase()" class="bg-zinc-100 text-zinc-700 hover:bg-zinc-200 px-4 py-2 rounded-xl font-bold transition-colors text-sm flex items-center gap-2 shadow-sm border border-zinc-200">
                             <i class="ph-bold ph-wallet"></i> Base: ${formatMoney(state.cashBase)}
                         </button>
                     </div>
 
                     <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
-                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ventas Totales (Subtotal)</div>
-                            <div class="text-3xl font-black text-slate-800">${formatMoney(totalSales)}</div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-zinc-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Ventas Totales (Subtotal)</div>
+                            <div class="text-3xl font-extrabold text-zinc-800">${formatMoney(totalSales)}</div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
-                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Efectivo en Caja</div>
-                            <div class="text-3xl font-black text-emerald-600">${formatMoney(cashInRegister)}</div>
-                            <div class="text-[10px] text-slate-400 mt-1">Incluye base de ${formatMoney(state.cashBase)}</div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-zinc-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Efectivo en Caja</div>
+                            <div class="text-3xl font-extrabold text-emerald-600">${formatMoney(cashInRegister)}</div>
+                            <div class="text-[10px] text-zinc-400 mt-1">Incluye base de ${formatMoney(state.cashBase)}</div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
-                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Servicio Recaudado</div>
-                            <div class="text-3xl font-black text-blue-600">${formatMoney(totalService)}</div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-zinc-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Servicio Recaudado</div>
+                            <div class="text-3xl font-extrabold text-indigo-600">${formatMoney(totalService)}</div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between h-full">
-                            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ganancia Neta</div>
-                            <div class="text-3xl font-black text-purple-600">${formatMoney(totalProfit)}</div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-zinc-200 flex flex-col justify-between h-full">
+                            <div class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Ganancia Neta</div>
+                            <div class="text-3xl font-extrabold text-purple-600">${formatMoney(totalProfit)}</div>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
-                        <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-                            <h3 class="text-lg font-black text-slate-800">Historial de Ventas</h3>
-                            <span class="bg-slate-200 text-slate-700 px-3 py-1 rounded-xl text-xs font-bold shadow-inner border border-slate-300">${totalItemsSold} artículos vendidos</span>
+                    <div class="bg-white rounded-2xl shadow-sm border border-zinc-200 flex-1 flex flex-col overflow-hidden">
+                        <div class="p-5 border-b border-zinc-200 flex justify-between items-center bg-zinc-50 shrink-0">
+                            <h3 class="text-lg font-extrabold text-zinc-800">Historial de Ventas</h3>
+                            <span class="bg-zinc-200 text-zinc-700 px-3 py-1 rounded-xl text-xs font-bold shadow-inner border border-zinc-300">${totalItemsSold} artículos vendidos</span>
                         </div>
-                        <div class="overflow-x-auto flex-1">
+                        <div class="overflow-auto flex-1">
                             <table class="w-full text-left min-w-[900px]">
-                                <thead class="bg-slate-50 border-b border-slate-200">
+                                <thead class="bg-zinc-50 border-b border-zinc-200">
                                     <tr>
-                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ref / Hora</th>
-                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Mesa / Zona</th>
-                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Método</th>
-                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Servicio</th>
-                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Cobrado</th>
-                                        <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ganancia</th>
+                                        <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Ref / Hora</th>
+                                        <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Mesa / Zona</th>
+                                        <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Método</th>
+                                        <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Servicio</th>
+                                        <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Total Cobrado</th>
+                                        <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Ganancia</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    ${visible.map(order => {
-                                        const table = state.tables.find(t => t.id === order.tableId);
-                                        const tableName = table ? table.name : '?';
-                                        const tableZone = table && table.zone ? table.zone : 'Sin zona';
+                                <tbody class="divide-y divide-zinc-100">
+                                    ${visible
+                                      .map((order) => {
+                                        const table = state.tables.find(
+                                          (t) => t.id === order.tableId,
+                                        );
+                                        const tableName = table
+                                          ? table.name
+                                          : "?";
+                                        const tableZone =
+                                          table && table.zone
+                                            ? table.zone
+                                            : "Sin zona";
 
-                                        const methodBadge = order.paymentMethod === 'efectivo' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                                            order.paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-purple-100 text-purple-700 border-purple-200';
+                                        const methodBadge =
+                                          order.paymentMethod === "efectivo"
+                                            ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                                            : order.paymentMethod === "tarjeta"
+                                              ? "bg-indigo-100 text-indigo-700 border-indigo-200"
+                                              : "bg-purple-100 text-purple-700 border-purple-200";
                                         return `
-                                            <tr class="hover:bg-slate-50 transition-colors">
+                                            <tr class="hover:bg-zinc-50 transition-colors">
                                                 <td class="p-4">
-                                                    <div class="font-bold text-slate-800">${order.ref}</div>
-                                                    <div class="text-[10px] text-slate-400 font-mono">${order.time}</div>
+                                                    <div class="font-bold text-zinc-800">${order.ref}</div>
+                                                    <div class="text-[10px] text-zinc-400 font-mono">${order.time}</div>
                                                 </td>
                                                 <td class="p-4">
-                                                    <div class="font-semibold text-slate-700">${tableName}</div>
-                                                    <div class="text-[10px] text-slate-500">${tableZone}</div>
+                                                    <div class="font-semibold text-zinc-700">${tableName}</div>
+                                                    <div class="text-[10px] text-zinc-500">${tableZone}</div>
                                                 </td>
-                                                <td class="p-4"><span class="px-2.5 py-1 rounded-lg text-xs font-bold capitalize border shadow-sm ${methodBadge}">${order.paymentMethod || 'N/A'}</span></td>
-                                                <td class="p-4 text-slate-600 font-medium">${formatMoney(order.serviceCharge || 0)}</td>
-                                                <td class="p-4 font-black text-slate-800">${formatMoney(order.finalTotal || order.total)}</td>
+                                                <td class="p-4"><span class="px-2.5 py-1 rounded-lg text-xs font-bold capitalize border shadow-sm ${methodBadge}">${order.paymentMethod || "N/A"}</span></td>
+                                                <td class="p-4 text-zinc-600 font-medium">${formatMoney(order.serviceCharge || 0)}</td>
+                                                <td class="p-4 font-extrabold text-zinc-800">${formatMoney(order.finalTotal || order.total)}</td>
                                                 <td class="p-4 font-bold text-emerald-600">${formatMoney(order.profit || 0)}</td>
                                             </tr>
                                         `;
-                                    }).join('')}
-                                    ${visible.length === 0 ? `<tr><td colspan="6" class="p-10 text-center text-slate-400 font-medium flex flex-col items-center justify-center h-full w-full">
+                                      })
+                                      .join("")}
+                                    ${
+                                      visible.length === 0
+                                        ? `<tr><td colspan="6" class="p-10 text-center text-zinc-400 font-medium flex flex-col items-center justify-center h-full w-full">
                                         <i class="ph-duotone ph-receipt text-4xl mb-2 opacity-50"></i>
                                         No hay ventas registradas aún.
-                                    </td></tr>` : ''}
+                                    </td></tr>`
+                                        : ""
+                                    }
                                 </tbody>
                             </table>
                         </div>
-                        <div class="p-4 border-t border-slate-200 bg-slate-50 shrink-0">
-                            ${getPaginationHTML('salesOrders', paidOrders.length)}
+                        <div class="p-4 border-t border-zinc-200 bg-zinc-50 shrink-0">
+                            ${getPaginationHTML("salesOrders", paidOrders.length)}
                         </div>
                     </div>
                 </div>
             `;
-        }
+      }
 
-        function modalSetCashBase() {
-            openModal(`
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="font-bold text-lg text-slate-800">Ajustar Base de Caja</h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+      function modalSetCashBase() {
+        openModal(`
+                <div class="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
+                    <h3 class="font-bold text-lg text-zinc-800">Ajustar Base de Caja</h3>
+                    <button onclick="closeModal()" class="text-zinc-400 hover:text-zinc-600"><i class="ph ph-x text-xl"></i></button>
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Monto Inicial (COP)</label>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Monto Inicial (COP)</label>
                         <input type="number" id="m-cash-base" class="input-pro text-lg font-bold" value="${state.cashBase}" placeholder="Ej: 50000">
                     </div>
-                    <p class="text-xs text-slate-500">Este valor se sumará al efectivo total recaudado en las ventas del día.</p>
-                    <button onclick="saveCashBase()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-colors">Guardar Base</button>
+                    <p class="text-xs text-zinc-500">Este valor se sumará al efectivo total recaudado en las ventas del día.</p>
+                    <button onclick="saveCashBase()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-colors">Guardar Base</button>
                 </div>
             `);
-            setTimeout(() => document.getElementById('m-cash-base').focus(), 50);
-        }
+        setTimeout(() => document.getElementById("m-cash-base").focus(), 50);
+      }
 
-        function saveCashBase() {
-            const base = parseInt(document.getElementById('m-cash-base').value) || 0;
-            state.cashBase = base;
-            closeModal();
-            renderSales();
-            notify(`Base de caja actualizada a ${formatMoney(base)}`, 'success');
-        }
+      function saveCashBase() {
+        const base =
+          parseInt(document.getElementById("m-cash-base").value) || 0;
+        state.cashBase = base;
+        closeModal();
+        renderSales();
+        notify(`Base de caja actualizada a ${formatMoney(base)}`, "success");
+      }
 
-        // ==========================================
-        // MÓDULO 1: ADMINISTRACIÓN
-        // ==========================================
-        function changeAdminTab(tab) {
-            state.adminTab = tab;
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                const isTab = btn.id === `tab-btn-${tab}`;
-                btn.className = `admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${isTab ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200'}`;
-            });
-            renderAdmin();
-        }
+      // ==========================================
+      // MÓDULO 1: ADMINISTRACIÓN
+      // ==========================================
+      function changeAdminTab(tab) {
+        state.adminTab = tab;
+        document.querySelectorAll(".admin-tab-btn").forEach((btn) => {
+          const isTab = btn.id === `tab-btn-${tab}`;
+          btn.className = `admin-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${isTab ? "bg-indigo-600 text-white shadow-md" : "bg-white text-zinc-500 hover:bg-zinc-100 border border-zinc-200"}`;
+        });
+        renderAdmin();
+      }
 
-        function renderAdmin() {
-            const container = document.getElementById('admin-content-area');
-            
-            if (state.adminTab === 'tables') {
-                container.innerHTML = `
+      function renderAdmin() {
+        const container = document.getElementById("admin-content-area");
+
+        if (state.adminTab === "tables") {
+          container.innerHTML = `
                     <div class="flex flex-col h-full p-4 sm:p-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 gap-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 bg-white p-4 rounded-2xl shadow-sm border border-zinc-200 gap-4">
                             <div>
-                                <h3 class="text-lg font-black text-slate-800">Distribución de Mesas</h3>
-                                <p class="text-xs text-slate-500 font-medium">Arrastra las mesas para configurar el salón. Haz clic en una mesa libre para reservarla.</p>
+                                <h3 class="text-lg font-extrabold text-zinc-800">Distribución de Mesas</h3>
+                                <p class="text-xs text-zinc-500 font-medium">Arrastra las mesas para configurar el salón. Haz clic en una mesa libre para reservarla.</p>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="modalAddZone()" class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-200 border border-slate-200 transition-all active:scale-95 text-sm">
+                                <button onclick="modalAddZone()" class="bg-zinc-100 text-zinc-700 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-zinc-200 border border-zinc-200 transition-all active:scale-95 text-sm">
                                     <i class="ph-bold ph-plus"></i> Zona
                                 </button>
-                                <button onclick="modalAddTable()" class="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95 text-sm">
+                                <button onclick="modalAddTable()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 transition-all active:scale-95 text-sm">
                                     <i class="ph-bold ph-plus"></i> Añadir Mesa
                                 </button>
                             </div>
@@ -752,379 +1070,430 @@
 
                         <!-- Zone Tabs -->
                         <div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
-                            ${state.zones.map(zone => `
-                                <button onclick="setAdminZone('${zone}')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap ${state.adminZone === zone ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">
+                            ${state.zones
+                              .map(
+                                (zone) => `
+                                <button onclick="setAdminZone('${zone}')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap ${state.adminZone === zone ? "bg-zinc-800 text-white border-zinc-800 shadow-md" : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"}">
                                     ${zone}
                                 </button>
-                            `).join('')}
+                            `,
+                              )
+                              .join("")}
                         </div>
 
-                        <div id="floor-plan-admin" class="flex-1 w-full border border-slate-200 rounded-2xl relative overflow-hidden shadow-inner floor-grid touch-none"></div>
+                        <div id="floor-plan-admin" class="flex-1 w-full border border-zinc-200 rounded-2xl relative overflow-hidden shadow-inner floor-grid touch-none"></div>
                     </div>
                 `;
-                renderFloorPlan('floor-plan-admin', true, state.adminZone);
-            }
-            else if (state.adminTab === 'menu') {
-                const pag = state.pagination.adminMenu;
-                const start = (pag.page - 1) * pag.itemsPerPage;
-                const visible = state.menu.slice(start, start + pag.itemsPerPage);
+          renderFloorPlan("floor-plan-admin", true, state.adminZone);
+        } else if (state.adminTab === "menu") {
+          const pag = state.pagination.adminMenu;
+          const start = (pag.page - 1) * pag.itemsPerPage;
+          const visible = state.menu.slice(start, start + pag.itemsPerPage);
 
-                container.innerHTML = `
+          container.innerHTML = `
                     <div class="p-4 sm:p-6 h-full overflow-y-auto flex flex-col">
-                        <div class="flex justify-between items-center mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 shrink-0">
-                            <h3 class="text-lg font-black text-slate-800">Menú y Precios</h3>
-                            <button onclick="modalAddMenu()" class="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95 text-sm">
+                        <div class="flex justify-between items-center mb-4 bg-white p-4 rounded-2xl shadow-sm border border-zinc-200 shrink-0">
+                            <h3 class="text-lg font-extrabold text-zinc-800">Menú y Precios</h3>
+                            <button onclick="modalAddMenu()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 transition-all active:scale-95 text-sm">
                                 <i class="ph-bold ph-plus"></i> Nuevo Plato
                             </button>
                         </div>
                         
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
-                            <div class="overflow-x-auto flex-1">
+                        <div class="bg-white rounded-2xl shadow-sm border border-zinc-200 flex-1 flex flex-col overflow-hidden">
+                            <div class="overflow-auto flex-1">
                                 <table class="w-full text-left min-w-[700px]">
-                                    <thead class="bg-slate-50 border-b border-slate-200">
+                                    <thead class="bg-zinc-50 border-b border-zinc-200">
                                         <tr>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Producto</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Categoría</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Precio</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Etiqueta</th>
-                                            <th class="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Acción</th>
+                                            <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Producto</th>
+                                            <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Categoría</th>
+                                            <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Precio</th>
+                                            <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Etiqueta</th>
+                                            <th class="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider text-right">Acción</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-100">
-                                        ${visible.map(item => `
-                                            <tr class="hover:bg-slate-50 transition-colors">
+                                    <tbody class="divide-y divide-zinc-100">
+                                        ${visible
+                                          .map(
+                                            (item) => `
+                                            <tr class="hover:bg-zinc-50 transition-colors">
                                                 <td class="p-4">
-                                                    <div class="font-bold text-slate-800">${item.name}</div>
-                                                    <div class="text-[10px] text-slate-400 font-mono">ID: #${item.id}</div>
+                                                    <div class="font-bold text-zinc-800">${item.name}</div>
+                                                    <div class="text-[10px] text-zinc-400 font-mono">ID: #${item.id}</div>
                                                 </td>
-                                                <td class="p-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-xs font-semibold">${item.category}</span></td>
-                                                <td class="p-4 font-black text-blue-600">${formatMoney(item.price)}</td>
+                                                <td class="p-4"><span class="bg-zinc-100 text-zinc-600 px-2.5 py-1 rounded-lg text-xs font-semibold">${item.category}</span></td>
+                                                <td class="p-4 font-extrabold text-indigo-600">${formatMoney(item.price)}</td>
                                                 <td class="p-4">${getTagBadgeHTML(item.tag)}</td>
                                                 <td class="p-4 text-right">
                                                     <button onclick="modalConfirmDelete('menu', ${item.id}, '${item.name}')" class="text-red-500 hover:bg-red-50 p-2 rounded-xl transition-colors"><i class="ph-fill ph-trash text-lg"></i></button>
                                                 </td>
                                             </tr>
-                                        `).join('')}
-                                        ${visible.length === 0 ? `<tr><td colspan="5" class="p-8 text-center text-slate-400">No hay productos.</td></tr>` : ''}
+                                        `,
+                                          )
+                                          .join("")}
+                                        ${visible.length === 0 ? `<tr><td colspan="5" class="p-8 text-center text-zinc-400">No hay productos.</td></tr>` : ""}
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
-                                ${getPaginationHTML('adminMenu', state.menu.length)}
+                            <div class="p-4 border-t border-zinc-100 bg-zinc-50 shrink-0">
+                                ${getPaginationHTML("adminMenu", state.menu.length)}
                             </div>
                         </div>
                     </div>
                 `;
-            }
-            // Módulos similares para Inventario y Personal omitidos parcialmente por brevedad, pero implementados con el mismo estándar visual si se expanden.
-            else {
-                // Placeholder elegante para los otros tabs
-                container.innerHTML = `
+        }
+        // Módulos similares para Inventario y Personal omitidos parcialmente por brevedad, pero implementados con el mismo estándar visual si se expanden.
+        else {
+          // Placeholder elegante para los otros tabs
+          container.innerHTML = `
                     <div class="flex items-center justify-center h-full">
-                        <div class="text-center p-8 bg-white rounded-3xl shadow-sm border border-slate-200 max-w-sm">
-                            <i class="ph-duotone ph-wrench text-6xl text-blue-400 mb-4"></i>
-                            <h3 class="font-bold text-lg text-slate-800">Módulo en construcción</h3>
-                            <p class="text-sm text-slate-500 mt-2">El esquema base soporta esta vista. Sigue el patrón del menú para extenderla.</p>
+                        <div class="text-center p-8 bg-white rounded-3xl shadow-sm border border-zinc-200 max-w-sm">
+                            <i class="ph-duotone ph-wrench text-6xl text-indigo-400 mb-4"></i>
+                            <h3 class="font-bold text-lg text-zinc-800">Módulo en construcción</h3>
+                            <p class="text-sm text-zinc-500 mt-2">El esquema base soporta esta vista. Sigue el patrón del menú para extenderla.</p>
                         </div>
                     </div>
                 `;
-            }
         }
+      }
 
-        // --- Floor Plan / Zones ---
-        function setAdminZone(zone) {
-            state.adminZone = zone;
-            renderAdmin();
-        }
+      // --- Floor Plan / Zones ---
+      function setAdminZone(zone) {
+        state.adminZone = zone;
+        renderAdmin();
+      }
 
-        function setWaiterZone(zone) {
-            state.waiterZone = zone;
-            renderWaiter();
-        }
+      function setWaiterZone(zone) {
+        state.waiterZone = zone;
+        renderWaiter();
+      }
 
-        function modalAddZone() {
-            openModal(`
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="font-bold text-lg text-slate-800">Agregar Nueva Zona</h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+      function modalAddZone() {
+        openModal(`
+                <div class="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
+                    <h3 class="font-bold text-lg text-zinc-800">Agregar Nueva Zona</h3>
+                    <button onclick="closeModal()" class="text-zinc-400 hover:text-zinc-600"><i class="ph ph-x text-xl"></i></button>
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la Zona</label>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Nombre de la Zona</label>
                         <input type="text" id="m-zone-name" class="input-pro" placeholder="Ej: VIP, Terraza 2...">
                     </div>
-                    <button onclick="saveZone()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-colors">Crear Zona</button>
+                    <button onclick="saveZone()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-colors">Crear Zona</button>
                 </div>
             `);
-            setTimeout(() => document.getElementById('m-zone-name').focus(), 50);
+        setTimeout(() => document.getElementById("m-zone-name").focus(), 50);
+      }
+
+      function saveZone() {
+        const name = document.getElementById("m-zone-name").value.trim();
+        if (!name) return notify("Ingresa un nombre para la zona", "warning");
+        if (state.zones.includes(name))
+          return notify("Esta zona ya existe", "warning");
+
+        state.zones.push(name);
+        state.adminZone = name; // Switch to new zone
+        closeModal();
+        renderAdmin();
+        notify(`Zona '${name}' creada con éxito`, "success");
+      }
+
+      function toggleTableReservation(tableId) {
+        const table = state.tables.find((t) => t.id === tableId);
+        if (!table) return;
+
+        if (table.status === "occupied") {
+          return notify("No se puede reservar una mesa ocupada.", "warning");
         }
 
-        function saveZone() {
-            const name = document.getElementById('m-zone-name').value.trim();
-            if(!name) return notify("Ingresa un nombre para la zona", "warning");
-            if(state.zones.includes(name)) return notify("Esta zona ya existe", "warning");
+        table.status = table.status === "free" ? "reserved" : "free";
+        renderAdmin();
+        const action = table.status === "reserved" ? "reservada" : "liberada";
+        notify(`Mesa '${table.name}' ${action}`, "info");
+      }
 
-            state.zones.push(name);
-            state.adminZone = name; // Switch to new zone
-            closeModal();
-            renderAdmin();
-            notify(`Zona '${name}' creada con éxito`, 'success');
+      // --- Drag & Drop Core Mejorado ---
+      let draggedTable = null;
+      let isDragging = false;
+      let startX, startY;
+
+      function renderFloorPlan(containerId, isDraggable = false, zone = null) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = "";
+
+        let displayTables = state.tables;
+        if (zone) {
+          displayTables = displayTables.filter((t) => t.zone === zone);
         }
 
-        function toggleTableReservation(tableId) {
-            const table = state.tables.find(t => t.id === tableId);
-            if (!table) return;
+        displayTables.forEach((table) => {
+          const el = document.createElement("div");
+          const isFree = table.status === "free";
+          const isReserved = table.status === "reserved";
 
-            if (table.status === 'occupied') {
-                return notify("No se puede reservar una mesa ocupada.", "warning");
-            }
+          let bgClass = "bg-white border-zinc-300 text-zinc-700"; // free
+          let iconColor = "text-zinc-400";
 
-            table.status = table.status === 'free' ? 'reserved' : 'free';
-            renderAdmin();
-            const action = table.status === 'reserved' ? 'reservada' : 'liberada';
-            notify(`Mesa '${table.name}' ${action}`, 'info');
-        }
+          if (table.status === "occupied") {
+            bgClass =
+              "bg-emerald-50 border-emerald-400 text-emerald-800 shadow-emerald-500/20";
+            iconColor = "text-emerald-500";
+          } else if (isReserved) {
+            bgClass =
+              "bg-purple-50 border-purple-400 text-purple-800 shadow-purple-500/20";
+            iconColor = "text-purple-500";
+          }
 
+          el.className = `table-item absolute w-20 h-20 sm:w-24 sm:h-24 rounded-3xl flex flex-col items-center justify-center shadow-lg border-2 select-none ${bgClass}`;
+          el.style.left = `${table.x}px`;
+          el.style.top = `${table.y}px`;
 
-        // --- Drag & Drop Core Mejorado ---
-        let draggedTable = null;
-        let isDragging = false;
-        let startX, startY;
+          let indicator = "";
+          if (!isFree && !isDraggable) {
+            const color =
+              table.status === "occupied" ? "bg-emerald-500" : "bg-purple-500";
+            indicator = `<div class="absolute -top-1.5 -right-1.5 ${color} w-4 h-4 rounded-full border-2 border-white shadow-sm animate-pulse"></div>`;
+          }
 
-        function renderFloorPlan(containerId, isDraggable = false, zone = null) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            container.innerHTML = '';
-            
-            let displayTables = state.tables;
-            if (zone) {
-                displayTables = displayTables.filter(t => t.zone === zone);
-            }
-
-            displayTables.forEach(table => {
-                const el = document.createElement('div');
-                const isFree = table.status === 'free';
-                const isReserved = table.status === 'reserved';
-                
-                let bgClass = 'bg-white border-slate-300 text-slate-700'; // free
-                let iconColor = 'text-slate-400';
-
-                if (table.status === 'occupied') {
-                    bgClass = 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-emerald-500/20';
-                    iconColor = 'text-emerald-500';
-                } else if (isReserved) {
-                    bgClass = 'bg-purple-50 border-purple-400 text-purple-800 shadow-purple-500/20';
-                    iconColor = 'text-purple-500';
-                }
-                
-                el.className = `table-item absolute w-20 h-20 sm:w-24 sm:h-24 rounded-3xl flex flex-col items-center justify-center shadow-lg border-2 select-none ${bgClass}`;
-                el.style.left = `${table.x}px`;
-                el.style.top = `${table.y}px`;
-
-                let indicator = '';
-                if (!isFree && !isDraggable) {
-                     const color = table.status === 'occupied' ? 'bg-emerald-500' : 'bg-purple-500';
-                     indicator = `<div class="absolute -top-1.5 -right-1.5 ${color} w-4 h-4 rounded-full border-2 border-white shadow-sm animate-pulse"></div>`;
-                }
-
-                el.innerHTML = `
+          el.innerHTML = `
                     <i class="ph-fill ph-armchair text-2xl mb-1 ${iconColor}"></i>
-                    <span class="font-black text-xs sm:text-sm leading-tight text-center px-1 truncate w-full">${table.name}</span>
-                    ${isReserved && isDraggable ? '<span class="text-[10px] font-bold text-purple-600 uppercase">Reserva</span>' : ''}
+                    <span class="font-extrabold text-xs sm:text-sm leading-tight text-center px-1 truncate w-full">${table.name}</span>
+                    ${isReserved && isDraggable ? '<span class="text-[10px] font-bold text-purple-600 uppercase">Reserva</span>' : ""}
                     ${indicator}
                 `;
 
-                if (isDraggable) {
-                    el.style.cursor = 'grab';
-                    
-                    // Doble clic / tap largo para reservar (o click en una zona sensible no cubierta por drag)
-                    // Para simplificar, agregamos un listener de click rápido vs drag
-                    let clickStartTime = 0;
+          if (isDraggable) {
+            el.style.cursor = "grab";
 
-                    const handleStart = (e) => {
-                        if(e.target.tagName === 'BUTTON') return; // ignorar botones dentro
-                        clickStartTime = Date.now();
-                        isDragging = false; // We don't know yet if it's a drag or click
-                        draggedTable = table;
-                        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                        
-                        const rect = el.getBoundingClientRect();
-                        startX = clientX - rect.left;
-                        startY = clientY - rect.top;
-                        
-                        // Delay visual dragging slightly to allow clicks
-                        setTimeout(() => {
-                           if(draggedTable === table && Date.now() - clickStartTime > 150) {
-                               isDragging = true;
-                               el.classList.add('dragging');
-                               document.body.style.userSelect = 'none';
-                           }
-                        }, 150);
-                    };
+            // Doble clic / tap largo para reservar (o click en una zona sensible no cubierta por drag)
+            // Para simplificar, agregamos un listener de click rápido vs drag
+            let clickStartTime = 0;
 
-                    const handleClick = (e) => {
-                        if(Date.now() - clickStartTime < 200 && !isDragging) {
-                            toggleTableReservation(table.id);
-                        }
-                    };
+            const handleStart = (e) => {
+              if (e.target.tagName === "BUTTON") return; // ignorar botones dentro
+              clickStartTime = Date.now();
+              isDragging = false; // We don't know yet if it's a drag or click
+              draggedTable = table;
+              const clientX = e.type.includes("mouse")
+                ? e.clientX
+                : e.touches[0].clientX;
+              const clientY = e.type.includes("mouse")
+                ? e.clientY
+                : e.touches[0].clientY;
 
-                    el.addEventListener('mousedown', handleStart);
-                    el.addEventListener('touchstart', handleStart, {passive: false});
-                    el.addEventListener('mouseup', handleClick);
-                    el.addEventListener('touchend', handleClick);
-                } else {
-                    el.style.cursor = 'pointer';
-                    el.onclick = () => selectWaiterTable(table.id);
+              const rect = el.getBoundingClientRect();
+              startX = clientX - rect.left;
+              startY = clientY - rect.top;
+
+              // Delay visual dragging slightly to allow clicks
+              setTimeout(() => {
+                if (
+                  draggedTable === table &&
+                  Date.now() - clickStartTime > 150
+                ) {
+                  isDragging = true;
+                  el.classList.add("dragging");
+                  document.body.style.userSelect = "none";
                 }
+              }, 150);
+            };
 
-                container.appendChild(el);
-            });
+            const handleClick = (e) => {
+              if (Date.now() - clickStartTime < 200 && !isDragging) {
+                toggleTableReservation(table.id);
+              }
+            };
 
-            if (isDraggable && !window.dndInitialized) {
-                window.dndInitialized = true; // Solo bindear document events una vez
-                
-                const handleMove = (e) => {
-                    if (!isDragging || !draggedTable) return;
-                    e.preventDefault();
-                    
-                    const containerRect = document.getElementById('floor-plan-admin').getBoundingClientRect();
-                    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                    
-                    let newX = clientX - containerRect.left - startX;
-                    let newY = clientY - containerRect.top - startY;
-                    
-                    // Limites (asumiendo mesa max 96px width)
-                    newX = Math.max(0, Math.min(newX, containerRect.width - 96)); 
-                    newY = Math.max(0, Math.min(newY, containerRect.height - 96));
-                    
-                    draggedTable.x = newX;
-                    draggedTable.y = newY;
-                    
-                    // Actualización directa del DOM para fluidez
-                    const activeEl = document.querySelector('.table-item.dragging');
-                    if(activeEl) {
-                        activeEl.style.left = `${newX}px`;
-                        activeEl.style.top = `${newY}px`;
-                    }
-                };
+            el.addEventListener("mousedown", handleStart);
+            el.addEventListener("touchstart", handleStart, { passive: false });
+            el.addEventListener("mouseup", handleClick);
+            el.addEventListener("touchend", handleClick);
+          } else {
+            el.style.cursor = "pointer";
+            el.onclick = () => selectWaiterTable(table.id);
+          }
 
-                const handleEnd = () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        draggedTable = null;
-                        document.body.style.userSelect = '';
-                        document.querySelectorAll('.table-item').forEach(el => el.classList.remove('dragging'));
-                    }
-                };
+          container.appendChild(el);
+        });
 
-                document.addEventListener('mousemove', handleMove);
-                document.addEventListener('touchmove', handleMove, {passive: false});
-                document.addEventListener('mouseup', handleEnd);
-                document.addEventListener('touchend', handleEnd);
+        if (isDraggable && !window.dndInitialized) {
+          window.dndInitialized = true; // Solo bindear document events una vez
+
+          const handleMove = (e) => {
+            if (!isDragging || !draggedTable) return;
+            e.preventDefault();
+
+            const containerRect = document
+              .getElementById("floor-plan-admin")
+              .getBoundingClientRect();
+            const clientX = e.type.includes("mouse")
+              ? e.clientX
+              : e.touches[0].clientX;
+            const clientY = e.type.includes("mouse")
+              ? e.clientY
+              : e.touches[0].clientY;
+
+            let newX = clientX - containerRect.left - startX;
+            let newY = clientY - containerRect.top - startY;
+
+            // Limites (asumiendo mesa max 96px width)
+            newX = Math.max(0, Math.min(newX, containerRect.width - 96));
+            newY = Math.max(0, Math.min(newY, containerRect.height - 96));
+
+            draggedTable.x = newX;
+            draggedTable.y = newY;
+
+            // Actualización directa del DOM para fluidez
+            const activeEl = document.querySelector(".table-item.dragging");
+            if (activeEl) {
+              activeEl.style.left = `${newX}px`;
+              activeEl.style.top = `${newY}px`;
             }
-        }
+          };
 
-        // ==========================================
-        // MÓDULO 2: VISTA MESERO
-        // ==========================================
-        function renderWaiter() {
-            const container = document.getElementById('view-waiter');
-            
-            if (!state.selectedTableId) {
-                // Seleccionador de Mesas
-                container.innerHTML = `
-                    <div class="p-4 sm:p-6 flex flex-col h-full overflow-hidden bg-slate-50">
-                        <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          const handleEnd = () => {
+            if (isDragging) {
+              isDragging = false;
+              draggedTable = null;
+              document.body.style.userSelect = "";
+              document
+                .querySelectorAll(".table-item")
+                .forEach((el) => el.classList.remove("dragging"));
+            }
+          };
+
+          document.addEventListener("mousemove", handleMove);
+          document.addEventListener("touchmove", handleMove, {
+            passive: false,
+          });
+          document.addEventListener("mouseup", handleEnd);
+          document.addEventListener("touchend", handleEnd);
+        }
+      }
+
+      // ==========================================
+      // MÓDULO 2: VISTA MESERO
+      // ==========================================
+      function renderWaiter() {
+        const container = document.getElementById("view-waiter");
+
+        if (!state.selectedTableId) {
+          // Seleccionador de Mesas
+          container.innerHTML = `
+                    <div class="p-4 sm:p-6 flex flex-col h-full overflow-hidden bg-zinc-50">
+                        <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-zinc-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <div>
-                                <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                                    <i class="ph-fill ph-map-trifold text-blue-500"></i> Selector de Mesas
+                                <h2 class="text-2xl font-extrabold text-zinc-800 tracking-tight flex items-center gap-2">
+                                    <i class="ph-fill ph-map-trifold text-indigo-500"></i> Selector de Mesas
                                 </h2>
-                                <p class="text-sm text-slate-500 font-medium mt-1">Selecciona una mesa para tomar o visualizar su pedido.</p>
+                                <p class="text-sm text-zinc-500 font-medium mt-1">Selecciona una mesa para tomar o visualizar su pedido.</p>
                             </div>
 
                             <!-- Zone Tabs for Waiter -->
                             <div class="flex gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto pb-2 sm:pb-0">
-                                ${state.zones.map(zone => `
-                                    <button onclick="setWaiterZone('${zone}')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap ${state.waiterZone === zone ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">
+                                ${state.zones
+                                  .map(
+                                    (zone) => `
+                                    <button onclick="setWaiterZone('${zone}')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap ${state.waiterZone === zone ? "bg-zinc-800 text-white border-zinc-800 shadow-md" : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"}">
                                         ${zone}
                                     </button>
-                                `).join('')}
+                                `,
+                                  )
+                                  .join("")}
                             </div>
                         </div>
 
-                        <div id="floor-plan-waiter" class="flex-1 w-full bg-white border border-slate-200 rounded-3xl relative overflow-hidden shadow-sm floor-grid touch-none"></div>
+                        <div id="floor-plan-waiter" class="flex-1 w-full bg-white border border-zinc-200 rounded-3xl relative overflow-hidden shadow-sm floor-grid touch-none"></div>
                     </div>
                 `;
-                setTimeout(() => renderFloorPlan('floor-plan-waiter', false, state.waiterZone), 0);
-            } else {
-                // Interfaz de Toma de Pedidos
-                const table = state.tables.find(t => t.id === state.selectedTableId);
-                const tableActiveOrder = state.orders.find(o => o.tableId === table.id && o.status !== 'paid');
-                
-                // Filtrado y Paginación
-                const pag = state.pagination.waiterMenu;
-                let filteredMenu = state.menu;
-                if(pag.filter !== 'Todas') {
-                    filteredMenu = filteredMenu.filter(m => m.category === pag.filter);
-                }
-                const start = (pag.page - 1) * pag.itemsPerPage;
-                const visibleMenu = filteredMenu.slice(start, start + pag.itemsPerPage);
+          setTimeout(
+            () => renderFloorPlan("floor-plan-waiter", false, state.waiterZone),
+            0,
+          );
+        } else {
+          // Interfaz de Toma de Pedidos
+          const table = state.tables.find(
+            (t) => t.id === state.selectedTableId,
+          );
+          const tableActiveOrder = state.orders.find(
+            (o) => o.tableId === table.id && o.status !== "paid",
+          );
 
-                container.innerHTML = `
-                    <div class="flex h-full w-full overflow-hidden relative bg-slate-50">
+          // Filtrado y Paginación
+          const pag = state.pagination.waiterMenu;
+          let filteredMenu = state.menu;
+          if (pag.filter !== "Todas") {
+            filteredMenu = filteredMenu.filter(
+              (m) => m.category === pag.filter,
+            );
+          }
+          const start = (pag.page - 1) * pag.itemsPerPage;
+          const visibleMenu = filteredMenu.slice(
+            start,
+            start + pag.itemsPerPage,
+          );
+
+          container.innerHTML = `
+                    <div class="flex h-full w-full overflow-hidden relative bg-zinc-50">
                         
                         <!-- Panel Izquierdo: Menú -->
                         <div class="flex-1 flex flex-col h-full overflow-hidden">
                             <!-- Header Mesero -->
-                            <div class="p-4 bg-white border-b border-slate-200 shadow-sm z-10 shrink-0">
+                            <div class="p-4 bg-white border-b border-zinc-200 shadow-sm z-10 shrink-0">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-xl sm:text-2xl font-black text-slate-800 flex items-center gap-3">
-                                        <button onclick="state.selectedTableId=null; renderWaiter();" class="w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-colors active:scale-95">
+                                    <h2 class="text-xl sm:text-2xl font-extrabold text-zinc-800 flex items-center gap-3">
+                                        <button onclick="state.selectedTableId=null; renderWaiter();" class="w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 rounded-full transition-colors active:scale-95">
                                             <i class="ph-bold ph-arrow-left text-lg"></i>
                                         </button>
                                         Mesa ${table.name}
                                     </h2>
-                                    ${tableActiveOrder ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 border border-emerald-200 shadow-sm"><i class="ph-fill ph-receipt"></i> Cuenta Activa</span>` : ''}
+                                    ${tableActiveOrder ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 border border-emerald-200 shadow-sm"><i class="ph-fill ph-receipt"></i> Cuenta Activa</span>` : ""}
                                 </div>
                                 
                                 <!-- Filtros de Categoría -->
                                 <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-                                    ${['Todas', ...state.categories].map(cat => `
-                                        <button onclick="setWaiterFilter('${cat}')" class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${pag.filter === cat ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}">
+                                    ${["Todas", ...state.categories]
+                                      .map(
+                                        (cat) => `
+                                        <button onclick="setWaiterFilter('${cat}')" class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${pag.filter === cat ? "bg-zinc-800 text-white border-zinc-800 shadow-md" : "bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50"}">
                                             ${cat}
                                         </button>
-                                    `).join('')}
+                                    `,
+                                      )
+                                      .join("")}
                                 </div>
                             </div>
 
                             <!-- Grilla Menú -->
                             <div class="flex-1 overflow-y-auto p-4 pb-28 lg:pb-4 flex flex-col">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-1 content-start">
-                                    ${visibleMenu.map(product => `
-                                        <div onclick="addToCart(${product.id})" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 cursor-pointer active:scale-[0.98] hover:border-blue-400 hover:shadow-md transition-all relative flex flex-row lg:flex-col items-center lg:items-start gap-4 lg:gap-0 group">
+                                    ${visibleMenu
+                                      .map(
+                                        (product) => `
+                                        <div onclick="addToCart(${product.id})" class="bg-white p-4 rounded-2xl shadow-sm border border-zinc-200 cursor-pointer active:scale-[0.98] hover:border-indigo-400 hover:shadow-md transition-all relative flex flex-row lg:flex-col items-center lg:items-start gap-4 lg:gap-0 group">
                                             <div class="lg:absolute lg:top-3 lg:right-3 order-2 lg:order-none ml-auto lg:ml-0 z-10">
                                                 ${getTagBadgeHTML(product.tag)}
                                             </div>
-                                            <div class="w-14 h-14 lg:w-16 lg:h-16 bg-slate-50 group-hover:bg-blue-50 rounded-2xl flex items-center justify-center lg:mb-4 shrink-0 transition-colors">
-                                                <i class="ph-duotone ph-fork-knife text-3xl text-slate-400 group-hover:text-blue-500"></i>
+                                            <div class="w-14 h-14 lg:w-16 lg:h-16 bg-zinc-50 group-hover:bg-indigo-50 rounded-2xl flex items-center justify-center lg:mb-4 shrink-0 transition-colors">
+                                                <i class="ph-duotone ph-fork-knife text-3xl text-zinc-400 group-hover:text-indigo-500"></i>
                                             </div>
                                             <div class="flex-1 w-full">
-                                                <h3 class="font-bold text-slate-800 text-base leading-tight mb-1 pr-12 lg:pr-0">${product.name}</h3>
+                                                <h3 class="font-bold text-zinc-800 text-base leading-tight mb-1 pr-12 lg:pr-0">${product.name}</h3>
                                                 <div class="flex items-center justify-between mt-2">
-                                                    <p class="text-blue-600 font-black text-lg">${formatMoney(product.price)}</p>
-                                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center lg:hidden opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph-bold ph-plus"></i></div>
+                                                    <p class="text-indigo-600 font-extrabold text-lg">${formatMoney(product.price)}</p>
+                                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center lg:hidden opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph-bold ph-plus"></i></div>
                                                 </div>
                                             </div>
                                         </div>
-                                    `).join('')}
-                                    ${visibleMenu.length===0 ? '<div class="col-span-full py-10 text-center text-slate-400 font-medium">No hay productos en esta categoría.</div>' : ''}
+                                    `,
+                                      )
+                                      .join("")}
+                                    ${visibleMenu.length === 0 ? '<div class="col-span-full py-10 text-center text-zinc-400 font-medium">No hay productos en esta categoría.</div>' : ""}
                                 </div>
                                 
                                 <!-- Paginación 1 a 1 Requerida -->
-                                <div class="mt-auto pt-4 border-t border-slate-200/60">
-                                    ${getPaginationHTML('waiterMenu', filteredMenu.length)}
+                                <div class="mt-auto pt-4 border-t border-zinc-200/60">
+                                    ${getPaginationHTML("waiterMenu", filteredMenu.length)}
                                 </div>
                             </div>
                         </div>
@@ -1132,65 +1501,73 @@
                         <!-- Panel Derecho: Comanda (Carrito) -->
                         
                         <!-- Overlay Móvil -->
-                        <div onclick="state.isCartOpenOnMobile = false; renderWaiter();" class="${state.isCartOpenOnMobile ? '' : 'hidden'} lg:hidden fixed inset-0 bg-slate-900/60 z-40 backdrop-blur-sm"></div>
+                        <div onclick="state.isCartOpenOnMobile = false; renderWaiter();" class="${state.isCartOpenOnMobile ? "" : "hidden"} lg:hidden fixed inset-0 bg-zinc-900/60 z-40 backdrop-blur-sm"></div>
 
                         <!-- Drawer Comanda -->
-                        <div class="fixed lg:static top-0 right-0 h-full w-full sm:w-96 bg-white border-l border-slate-200 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${state.isCartOpenOnMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}">
-                            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+                        <div class="fixed lg:static top-0 right-0 h-full w-full sm:w-96 bg-white border-l border-zinc-200 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${state.isCartOpenOnMobile ? "translate-x-0" : "translate-x-full lg:translate-x-0"}">
+                            <div class="p-5 border-b border-zinc-100 bg-zinc-50 flex justify-between items-center shrink-0">
                                 <div>
-                                    <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
-                                        <i class="ph-fill ph-receipt text-blue-600"></i> Comanda Actual
+                                    <h3 class="text-lg font-extrabold text-zinc-800 flex items-center gap-2">
+                                        <i class="ph-fill ph-receipt text-indigo-600"></i> Comanda Actual
                                     </h3>
-                                    <p class="text-xs text-slate-500 font-medium mt-0.5">Mesa ${table.name} • Juan P.</p>
+                                    <p class="text-xs text-zinc-500 font-medium mt-0.5">Mesa ${table.name} • Juan P.</p>
                                 </div>
-                                <button onclick="state.isCartOpenOnMobile = false; renderWaiter();" class="lg:hidden w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-600 rounded-full shadow-sm">
+                                <button onclick="state.isCartOpenOnMobile = false; renderWaiter();" class="lg:hidden w-10 h-10 flex items-center justify-center bg-white border border-zinc-200 text-zinc-600 rounded-full shadow-sm">
                                     <i class="ph-bold ph-x"></i>
                                 </button>
                             </div>
                             
-                            <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
-                                ${state.cart.length === 0 ? `
-                                    <div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-60">
+                            <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-50/50">
+                                ${
+                                  state.cart.length === 0
+                                    ? `
+                                    <div class="h-full flex flex-col items-center justify-center text-zinc-400 opacity-60">
                                         <i class="ph-duotone ph-basket text-6xl mb-4"></i>
                                         <p class="font-medium">Selecciona productos del menú</p>
                                     </div>
-                                ` : state.cart.map(item => `
-                                    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-3 animate-fade-in">
-                                        <div class="flex justify-between font-bold text-slate-800 text-sm">
+                                `
+                                    : state.cart
+                                        .map(
+                                          (item) => `
+                                    <div class="bg-white p-3.5 rounded-2xl border border-zinc-200 shadow-sm flex flex-col gap-3 animate-fade-in">
+                                        <div class="flex justify-between font-bold text-zinc-800 text-sm">
                                             <span class="truncate pr-2">${item.name}</span>
-                                            <span class="text-blue-600">${formatMoney(item.price * item.quantity)}</span>
+                                            <span class="text-indigo-600">${formatMoney(item.price * item.quantity)}</span>
                                         </div>
                                         <div class="flex justify-between items-center">
                                             <!-- Control Cantidades + / - -->
-                                            <div class="flex items-center gap-1 bg-slate-50 rounded-xl border border-slate-200 p-1 shadow-inner">
-                                                <button onclick="updateCartQty(${item.productId}, -1)" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors active:scale-95"><i class="ph-bold ph-minus"></i></button>
-                                                <span class="w-8 text-center font-black text-slate-700">${item.quantity}</span>
-                                                <button onclick="updateCartQty(${item.productId}, 1)" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors active:scale-95"><i class="ph-bold ph-plus"></i></button>
+                                            <div class="flex items-center gap-1 bg-zinc-50 rounded-xl border border-zinc-200 p-1 shadow-inner">
+                                                <button onclick="updateCartQty(${item.productId}, -1)" class="w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors active:scale-95"><i class="ph-bold ph-minus"></i></button>
+                                                <span class="w-8 text-center font-extrabold text-zinc-700">${item.quantity}</span>
+                                                <button onclick="updateCartQty(${item.productId}, 1)" class="w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors active:scale-95"><i class="ph-bold ph-plus"></i></button>
                                             </div>
-                                            <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">${formatMoney(item.price)} c/u</span>
+                                            <span class="text-xs font-semibold text-zinc-400 bg-zinc-100 px-2 py-1 rounded-md">${formatMoney(item.price)} c/u</span>
                                         </div>
                                     </div>
-                                `).join('')}
+                                `,
+                                        )
+                                        .join("")
+                                }
                             </div>
 
-                            <div class="p-5 border-t border-slate-200 bg-white shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
+                            <div class="p-5 border-t border-zinc-200 bg-white shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
                                 <div class="flex justify-between items-end mb-5">
-                                    <span class="font-bold text-slate-500">Subtotal</span>
-                                    <span class="font-black text-2xl text-slate-800">${formatMoney(getCartTotal())}</span>
+                                    <span class="font-bold text-zinc-500">Subtotal</span>
+                                    <span class="font-extrabold text-2xl text-zinc-800">${formatMoney(getCartTotal())}</span>
                                 </div>
-                                <button onclick="sendOrder()" ${state.cart.length === 0 ? 'disabled' : ''} class="w-full bg-blue-600 text-white font-black text-lg py-4 rounded-2xl shadow-xl shadow-blue-500/30 hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
+                                <button onclick="sendOrder()" ${state.cart.length === 0 ? "disabled" : ""} class="w-full bg-indigo-600 text-white font-extrabold text-lg py-4 rounded-2xl shadow-xl shadow-indigo-500/30 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
                                     <i class="ph-fill ph-paper-plane-tilt"></i> Enviar a Cocina
                                 </button>
                             </div>
                         </div>
 
                         <!-- Botón Flotante Móvil -->
-                        <div class="lg:hidden fixed bottom-6 left-4 right-4 z-40">
-                            <button onclick="state.isCartOpenOnMobile = true; renderWaiter();" class="w-full bg-slate-900 text-white rounded-2xl shadow-2xl p-4 flex items-center justify-between font-bold text-lg active:scale-[0.98] transition-transform border border-slate-700">
+                        <div class="lg:hidden fixed bottom-[90px] left-4 right-4 z-40">
+                            <button onclick="state.isCartOpenOnMobile = true; renderWaiter();" class="w-full bg-zinc-900 text-white rounded-2xl shadow-2xl p-4 flex items-center justify-between font-bold text-lg active:scale-[0.98] transition-transform border border-zinc-700">
                                 <div class="flex items-center gap-3">
-                                    <div class="relative bg-slate-800 p-2 rounded-xl">
+                                    <div class="relative bg-zinc-800 p-2 rounded-xl">
                                         <i class="ph-fill ph-shopping-bag text-xl"></i>
-                                        ${state.cart.length > 0 ? `<span class="absolute -top-2 -right-2 bg-blue-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-black border-2 border-slate-900">${state.cart.reduce((s,i)=>s+i.quantity,0)}</span>` : ''}
+                                        ${state.cart.length > 0 ? `<span class="absolute -top-2 -right-2 bg-indigo-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-extrabold border-2 border-zinc-900">${state.cart.reduce((s, i) => s + i.quantity, 0)}</span>` : ""}
                                     </div>
                                     <span>Ver Pedido</span>
                                 </div>
@@ -1200,284 +1577,327 @@
 
                     </div>
                 `;
-            }
+        }
+      }
+
+      // Lógica Mesero
+      function setWaiterFilter(cat) {
+        state.pagination.waiterMenu.filter = cat;
+        state.pagination.waiterMenu.page = 1; // Reset page
+        renderWaiter();
+      }
+
+      function selectWaiterTable(id) {
+        state.selectedTableId = id;
+        state.cart = [];
+        state.pagination.waiterMenu.page = 1;
+        renderWaiter();
+      }
+
+      function addToCart(productId) {
+        const p = state.menu.find((x) => x.id === productId);
+        const ex = state.cart.find((i) => i.productId === productId);
+        if (ex) ex.quantity++;
+        else
+          state.cart.push({
+            productId,
+            name: p.name,
+            price: p.price,
+            quantity: 1,
+          });
+
+        // Efecto sutil sin recargar todo el HTML drásticamente (UX)
+        notify(`Añadido: ${p.name}`, "info");
+        renderWaiter();
+      }
+
+      function updateCartQty(productId, delta) {
+        const item = state.cart.find((i) => i.productId === productId);
+        if (item) {
+          item.quantity += delta;
+          if (item.quantity <= 0)
+            state.cart = state.cart.filter((i) => i.productId !== productId);
+        }
+        renderWaiter();
+      }
+
+      function getCartTotal() {
+        return state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      }
+
+      function sendOrder() {
+        if (state.cart.length === 0) return;
+
+        const table = state.tables.find((t) => t.id === state.selectedTableId);
+        const subtotal = getCartTotal();
+        const tax = subtotal * 0.19;
+        const total = subtotal + tax;
+
+        const existingOrder = state.orders.find(
+          (o) => o.tableId === table.id && o.status !== "paid",
+        );
+
+        if (existingOrder) {
+          // Merge items para misma cuenta
+          state.cart.forEach((cItem) => {
+            const exItem = existingOrder.items.find(
+              (i) => i.productId === cItem.productId,
+            );
+            if (exItem) exItem.quantity += cItem.quantity;
+            else existingOrder.items.push({ ...cItem });
+          });
+          existingOrder.subtotal += subtotal;
+          existingOrder.tax += tax;
+          existingOrder.total += total;
+          existingOrder.status = "pending";
+        } else {
+          state.orders.push({
+            id: Date.now(),
+            tableId: table.id,
+            items: [...state.cart],
+            status: "pending",
+            subtotal,
+            tax,
+            total,
+            time: new Date().toLocaleTimeString("es-CO", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            ref: `TK-${Math.floor(Math.random() * 9000) + 1000}`,
+          });
         }
 
-        // Lógica Mesero
-        function setWaiterFilter(cat) {
-            state.pagination.waiterMenu.filter = cat;
-            state.pagination.waiterMenu.page = 1; // Reset page
-            renderWaiter();
-        }
+        table.status = "occupied";
+        state.cart = [];
+        state.selectedTableId = null;
+        state.isCartOpenOnMobile = false;
 
-        function selectWaiterTable(id) {
-            state.selectedTableId = id;
-            state.cart = [];
-            state.pagination.waiterMenu.page = 1;
-            renderWaiter();
-        }
+        notify(`Orden enviada a cocina (Mesa ${table.name})`, "success");
+        renderWaiter();
+      }
 
-        function addToCart(productId) {
-            const p = state.menu.find(x => x.id === productId);
-            const ex = state.cart.find(i => i.productId === productId);
-            if (ex) ex.quantity++;
-            else state.cart.push({ productId, name: p.name, price: p.price, quantity: 1 });
-            
-            // Efecto sutil sin recargar todo el HTML drásticamente (UX)
-            notify(`Añadido: ${p.name}`, 'info');
-            renderWaiter();
-        }
+      // ==========================================
+      // MÓDULO 3: VISTA COCINA (KDS)
+      // ==========================================
+      function renderKitchen() {
+        const container = document.getElementById("kitchen-tickets-container");
+        const activeTickets = state.orders.filter(
+          (o) => o.status === "pending" || o.status === "cooking",
+        );
 
-        function updateCartQty(productId, delta) {
-            const item = state.cart.find(i => i.productId === productId);
-            if (item) {
-                item.quantity += delta;
-                if (item.quantity <= 0) state.cart = state.cart.filter(i => i.productId !== productId);
-            }
-            renderWaiter();
-        }
-
-        function getCartTotal() {
-            return state.cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-        }
-
-        function sendOrder() {
-            if (state.cart.length === 0) return;
-            
-            const table = state.tables.find(t => t.id === state.selectedTableId);
-            const subtotal = getCartTotal();
-            const tax = subtotal * 0.19; 
-            const total = subtotal + tax;
-
-            const existingOrder = state.orders.find(o => o.tableId === table.id && o.status !== 'paid');
-            
-            if (existingOrder) {
-                // Merge items para misma cuenta
-                state.cart.forEach(cItem => {
-                    const exItem = existingOrder.items.find(i => i.productId === cItem.productId);
-                    if(exItem) exItem.quantity += cItem.quantity;
-                    else existingOrder.items.push({...cItem});
-                });
-                existingOrder.subtotal += subtotal;
-                existingOrder.tax += tax;
-                existingOrder.total += total;
-                existingOrder.status = 'pending'; 
-            } else {
-                state.orders.push({
-                    id: Date.now(), tableId: table.id,
-                    items: [...state.cart],
-                    status: 'pending', subtotal, tax, total,
-                    time: new Date().toLocaleTimeString('es-CO', {hour: '2-digit', minute:'2-digit'}),
-                    ref: `TK-${Math.floor(Math.random()*9000)+1000}`
-                });
-            }
-
-            table.status = 'occupied';
-            state.cart = [];
-            state.selectedTableId = null;
-            state.isCartOpenOnMobile = false;
-            
-            notify(`Orden enviada a cocina (Mesa ${table.name})`, "success");
-            renderWaiter();
-        }
-
-
-        // ==========================================
-        // MÓDULO 3: VISTA COCINA (KDS)
-        // ==========================================
-        function renderKitchen() {
-            const container = document.getElementById('kitchen-tickets-container');
-            const activeTickets = state.orders.filter(o => o.status === 'pending' || o.status === 'cooking');
-            
-            if (activeTickets.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full py-24 flex flex-col items-center justify-center text-slate-500">
-                        <div class="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mb-6 border-4 border-slate-700">
+        if (activeTickets.length === 0) {
+          container.innerHTML = `
+                    <div class="col-span-full py-24 flex flex-col items-center justify-center text-zinc-500">
+                        <div class="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center mb-6 border-4 border-zinc-700">
                             <i class="ph-bold ph-check text-4xl text-emerald-500"></i>
                         </div>
-                        <h3 class="text-2xl font-black text-white mb-2">Todo bajo control</h3>
-                        <p class="text-slate-400 font-medium">No hay comandas pendientes en este momento.</p>
+                        <h3 class="text-2xl font-extrabold text-white mb-2">Todo bajo control</h3>
+                        <p class="text-zinc-400 font-medium">No hay comandas pendientes en este momento.</p>
                     </div>`;
-                return;
-            }
+          return;
+        }
 
-            container.innerHTML = activeTickets.map(order => {
-                const table = state.tables.find(t => t.id === order.tableId);
-                const isPending = order.status === 'pending';
-                
-                return `
-                    <div class="bg-slate-800 rounded-3xl overflow-hidden border-2 flex flex-col shadow-2xl ${isPending ? 'border-amber-500/50' : 'border-blue-500 animate-pulse-ring'}">
-                        <div class="p-4 flex justify-between items-center ${isPending ? 'bg-amber-500/10 border-b border-amber-500/20' : 'bg-blue-500/20 border-b border-blue-500/30'}">
-                            <h3 class="font-black text-xl text-white">Mesa ${table ? table.name : '?'}</h3>
-                            <div class="flex items-center gap-1.5 px-3 py-1 bg-slate-900/50 rounded-lg text-sm font-bold shadow-inner">
-                                <i class="ph-bold ph-clock ${isPending ? 'text-amber-400' : 'text-blue-400'}"></i>
+        container.innerHTML = activeTickets
+          .map((order) => {
+            const table = state.tables.find((t) => t.id === order.tableId);
+            const isPending = order.status === "pending";
+
+            return `
+                    <div class="bg-zinc-800 rounded-3xl overflow-hidden border-2 flex flex-col shadow-2xl ${isPending ? "border-amber-500/50" : "border-indigo-500 animate-pulse-ring"}">
+                        <div class="p-4 flex justify-between items-center ${isPending ? "bg-amber-500/10 border-b border-amber-500/20" : "bg-indigo-500/20 border-b border-indigo-500/30"}">
+                            <h3 class="font-extrabold text-xl text-white">Mesa ${table ? table.name : "?"}</h3>
+                            <div class="flex items-center gap-1.5 px-3 py-1 bg-zinc-900/50 rounded-lg text-sm font-bold shadow-inner">
+                                <i class="ph-bold ph-clock ${isPending ? "text-amber-400" : "text-indigo-400"}"></i>
                                 <span class="text-white">${order.time}</span>
                             </div>
                         </div>
                         
-                        <div class="p-5 flex-1 bg-slate-800/50">
+                        <div class="p-5 flex-1 bg-zinc-800/50">
                             <ul class="space-y-4">
-                                ${order.items.map(item => `
+                                ${order.items
+                                  .map(
+                                    (item) => `
                                     <li class="flex items-start gap-4">
-                                        <span class="font-black text-lg min-w-[2.5rem] h-10 flex items-center justify-center rounded-xl bg-slate-700 text-white shadow-inner border border-slate-600">${item.quantity}</span>
-                                        <span class="text-slate-200 font-bold text-lg leading-tight pt-1">${item.name}</span>
+                                        <span class="font-extrabold text-lg min-w-[2.5rem] h-10 flex items-center justify-center rounded-xl bg-zinc-700 text-white shadow-inner border border-zinc-600">${item.quantity}</span>
+                                        <span class="text-zinc-200 font-bold text-lg leading-tight pt-1">${item.name}</span>
                                     </li>
-                                `).join('')}
+                                `,
+                                  )
+                                  .join("")}
                             </ul>
                         </div>
                         
-                        <div class="p-4 bg-slate-900 border-t border-slate-700">
-                            ${isPending ? `
-                                <button onclick="updateOrderStatus(${order.id}, 'cooking')" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-2xl font-black text-lg transition-colors shadow-lg active:scale-95 flex justify-center items-center gap-2">
+                        <div class="p-4 bg-zinc-900 border-t border-zinc-700">
+                            ${
+                              isPending
+                                ? `
+                                <button onclick="updateOrderStatus(${order.id}, 'cooking')" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-zinc-900 rounded-2xl font-extrabold text-lg transition-colors shadow-lg active:scale-95 flex justify-center items-center gap-2">
                                     <i class="ph-bold ph-fire"></i> Preparar
                                 </button>
-                            ` : `
-                                <button onclick="updateOrderStatus(${order.id}, 'ready')" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-lg transition-colors shadow-lg shadow-blue-500/30 active:scale-95 flex justify-center items-center gap-2">
+                            `
+                                : `
+                                <button onclick="updateOrderStatus(${order.id}, 'ready')" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-extrabold text-lg transition-colors shadow-lg shadow-indigo-500/30 active:scale-95 flex justify-center items-center gap-2">
                                     <i class="ph-bold ph-bell-ringing"></i> Despachar
                                 </button>
-                            `}
+                            `
+                            }
                         </div>
                     </div>
                 `;
-            }).join('');
+          })
+          .join("");
+      }
+
+      function updateOrderStatus(orderId, newStatus) {
+        const order = state.orders.find((o) => o.id === orderId);
+        if (order) {
+          order.status = newStatus;
+          if (newStatus === "ready") {
+            const table = state.tables.find((t) => t.id === order.tableId);
+            notify(`El pedido de la Mesa ${table.name} está LISTO`, "success");
+          }
         }
+        renderKitchen();
+      }
 
-        function updateOrderStatus(orderId, newStatus) {
-            const order = state.orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = newStatus;
-                if (newStatus === 'ready') {
-                    const table = state.tables.find(t => t.id === order.tableId);
-                    notify(`El pedido de la Mesa ${table.name} está LISTO`, 'success');
-                }
-            }
-            renderKitchen();
-        }
+      setInterval(() => {
+        const el = document.getElementById("kitchen-clock");
+        if (el)
+          el.innerText = new Date().toLocaleTimeString("es-CO", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+      }, 1000);
 
-        setInterval(() => {
-            const el = document.getElementById('kitchen-clock');
-            if(el) el.innerText = new Date().toLocaleTimeString('es-CO', {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
+      // ==========================================
+      // MÓDULO 4: VISTA CAJA
+      // ==========================================
+      function renderCashier() {
+        const container = document.getElementById("cashier-tickets-container");
+        const activeOrders = state.orders.filter((o) => o.status !== "paid");
 
-        // ==========================================
-        // MÓDULO 4: VISTA CAJA
-        // ==========================================
-        function renderCashier() {
-            const container = document.getElementById('cashier-tickets-container');
-            const activeOrders = state.orders.filter(o => o.status !== 'paid');
-            
-            if (activeOrders.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full py-20 flex flex-col items-center justify-center text-slate-400">
-                        <i class="ph-duotone ph-receipt text-7xl mb-4 text-slate-300"></i>
-                        <h3 class="text-xl font-bold text-slate-500">Sin cuentas pendientes</h3>
+        if (activeOrders.length === 0) {
+          container.innerHTML = `
+                    <div class="col-span-full py-20 flex flex-col items-center justify-center text-zinc-400">
+                        <i class="ph-duotone ph-receipt text-7xl mb-4 text-zinc-300"></i>
+                        <h3 class="text-xl font-bold text-zinc-500">Sin cuentas pendientes</h3>
                     </div>`;
-                return;
-            }
+          return;
+        }
 
-            container.innerHTML = activeOrders.map(order => {
-                const table = state.tables.find(t => t.id === order.tableId);
-                const isReady = order.status === 'ready';
+        container.innerHTML = activeOrders
+          .map((order) => {
+            const table = state.tables.find((t) => t.id === order.tableId);
+            const isReady = order.status === "ready";
 
-                return `
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-                        <div class="bg-slate-900 p-5 flex justify-between items-center text-white">
+            return `
+                    <div class="bg-white rounded-3xl shadow-sm border border-zinc-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+                        <div class="bg-zinc-900 p-5 flex justify-between items-center text-white">
                             <div>
-                                <h3 class="font-black text-xl">Mesa ${table ? table.name : '?'}</h3>
-                                <p class="text-xs text-slate-400 font-mono mt-1">Ref: ${order.ref}</p>
+                                <h3 class="font-extrabold text-xl">Mesa ${table ? table.name : "?"}</h3>
+                                <p class="text-xs text-zinc-400 font-mono mt-1">Ref: ${order.ref}</p>
                             </div>
-                            <span class="text-xs px-3 py-1.5 rounded-full border font-bold flex items-center gap-1 ${isReady ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-300 border-slate-600'}">
-                                <i class="ph-fill ${isReady ? 'ph-check-circle' : 'ph-cooking-pot'}"></i> ${isReady ? 'Servido' : 'Proceso'}
+                            <span class="text-xs px-3 py-1.5 rounded-full border font-bold flex items-center gap-1 ${isReady ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : "bg-zinc-700 text-zinc-300 border-zinc-600"}">
+                                <i class="ph-fill ${isReady ? "ph-check-circle" : "ph-cooking-pot"}"></i> ${isReady ? "Servido" : "Proceso"}
                             </span>
                         </div>
                         
-                        <div class="p-6 flex-1 bg-[radial-gradient(#f1f5f9_1px,transparent_1px)] [background-size:16px_16px]">
-                            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                                <div class="space-y-3 mb-4 border-b border-slate-100 pb-4">
-                                    ${order.items.map(item => `
-                                        <div class="flex justify-between text-sm font-medium text-slate-600">
+                        <div class="p-6 flex-1 bg-[radial-gradient(#f4f4f5_1px,transparent_1px)] [background-size:16px_16px]">
+                            <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                                <div class="space-y-3 mb-4 border-b border-zinc-100 pb-4">
+                                    ${order.items
+                                      .map(
+                                        (item) => `
+                                        <div class="flex justify-between text-sm font-medium text-zinc-600">
                                             <span class="truncate pr-2">${item.quantity}x ${item.name}</span>
-                                            <span class="shrink-0 text-slate-800">${formatMoney(item.price * item.quantity)}</span>
+                                            <span class="shrink-0 text-zinc-800">${formatMoney(item.price * item.quantity)}</span>
                                         </div>
-                                    `).join('')}
+                                    `,
+                                      )
+                                      .join("")}
                                 </div>
                                 <div class="space-y-1.5 text-sm font-medium">
-                                    <div class="flex justify-between text-slate-500">
+                                    <div class="flex justify-between text-zinc-500">
                                         <span>Subtotal</span><span>${formatMoney(order.subtotal)}</span>
                                     </div>
-                                    <div class="flex justify-between text-slate-500">
+                                    <div class="flex justify-between text-zinc-500">
                                         <span>IVA (19%)</span><span>${formatMoney(order.tax)}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="p-5 bg-white border-t border-slate-200 shrink-0">
-                            <div class="flex justify-between items-center mb-5 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Total</span>
-                                <span class="text-3xl font-black text-emerald-600">${formatMoney(order.total)}</span>
+                        <div class="p-5 bg-white border-t border-zinc-200 shrink-0">
+                            <div class="flex justify-between items-center mb-5 bg-zinc-50 p-4 rounded-2xl border border-zinc-100">
+                                <span class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Total</span>
+                                <span class="text-3xl font-extrabold text-emerald-600">${formatMoney(order.total)}</span>
                             </div>
-                            <button onclick="processPayment(${order.id}, ${table.id})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-4 rounded-2xl transition-colors shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95">
+                            <button onclick="processPayment(${order.id}, ${table.id})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-lg py-4 rounded-2xl transition-colors shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95">
                                 <i class="ph-bold ph-currency-dollar text-2xl"></i> Facturar y Liberar
                             </button>
                         </div>
                     </div>
                 `;
-            }).join('');
-        }
+          })
+          .join("");
+      }
 
-        function processPayment(orderId, tableId) {
-            const table = state.tables.find(t => t.id === tableId);
-            const order = state.orders.find(o => o.id === orderId);
+      function processPayment(orderId, tableId) {
+        const table = state.tables.find((t) => t.id === tableId);
+        const order = state.orders.find((o) => o.id === orderId);
 
-            // By default, service is 10% of subtotal
-            const defaultServiceCharge = order.subtotal * 0.10;
+        // By default, service is 10% of subtotal
+        const defaultServiceCharge = order.subtotal * 0.1;
 
-            openModal(`
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="font-bold text-lg text-slate-800">Procesar Pago - Mesa ${table.name}</h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="ph ph-x text-xl"></i></button>
+        openModal(`
+                <div class="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
+                    <h3 class="font-bold text-lg text-zinc-800">Procesar Pago - Mesa ${table.name}</h3>
+                    <button onclick="closeModal()" class="text-zinc-400 hover:text-zinc-600"><i class="ph ph-x text-xl"></i></button>
                 </div>
                 <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
                     <!-- Detalle de Productos -->
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm max-h-48 overflow-y-auto">
-                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Detalle del Pedido</h4>
+                    <div class="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm max-h-48 overflow-y-auto">
+                        <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">Detalle del Pedido</h4>
                         <div class="space-y-2">
-                            ${order.items.map(item => `
+                            ${order.items
+                              .map(
+                                (item) => `
                                 <div class="flex justify-between text-sm">
-                                    <span class="font-medium text-slate-700"><span class="text-slate-400 mr-1">${item.quantity}x</span>${item.name}</span>
-                                    <span class="text-slate-800">${formatMoney(item.price * item.quantity)}</span>
+                                    <span class="font-medium text-zinc-700"><span class="text-zinc-400 mr-1">${item.quantity}x</span>${item.name}</span>
+                                    <span class="text-zinc-800">${formatMoney(item.price * item.quantity)}</span>
                                 </div>
-                            `).join('')}
+                            `,
+                              )
+                              .join("")}
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="bg-zinc-50 p-4 rounded-xl border border-zinc-200">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-slate-600">Subtotal + IVA:</span>
-                            <span class="font-bold text-slate-800" id="payment-base-total" data-base="${order.total}">${formatMoney(order.total)}</span>
+                            <span class="text-sm font-medium text-zinc-600">Subtotal + IVA:</span>
+                            <span class="font-bold text-zinc-800" id="payment-base-total" data-base="${order.total}">${formatMoney(order.total)}</span>
                         </div>
 
-                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200">
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Servicio Voluntario (Propina)</label>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-zinc-200">
+                            <label class="block text-xs font-bold text-zinc-500 uppercase mb-2">Servicio Voluntario (Propina)</label>
                             <div class="flex items-center gap-2">
-                                <span class="text-slate-500 font-bold">$</span>
-                                <input type="number" id="m-payment-service-input" class="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-1.5 text-sm font-bold text-blue-600 outline-none focus:border-blue-400" value="${defaultServiceCharge}" oninput="updatePaymentTotal(${order.total})">
+                                <span class="text-zinc-500 font-bold">$</span>
+                                <input type="number" id="m-payment-service-input" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-sm font-bold text-indigo-600 outline-none focus:border-indigo-400" value="${defaultServiceCharge}" oninput="updatePaymentTotal(${order.total})">
                             </div>
-                            <div class="text-[10px] text-slate-400 mt-1 flex gap-2">
-                                <button onclick="document.getElementById('m-payment-service-input').value=${defaultServiceCharge}; updatePaymentTotal(${order.total})" class="hover:text-blue-500">10% Sugerido</button>
-                                <button onclick="document.getElementById('m-payment-service-input').value=0; updatePaymentTotal(${order.total})" class="hover:text-blue-500">Sin Servicio</button>
+                            <div class="text-[10px] text-zinc-400 mt-1 flex gap-2">
+                                <button onclick="document.getElementById('m-payment-service-input').value=${defaultServiceCharge}; updatePaymentTotal(${order.total})" class="hover:text-indigo-500">10% Sugerido</button>
+                                <button onclick="document.getElementById('m-payment-service-input').value=0; updatePaymentTotal(${order.total})" class="hover:text-indigo-500">Sin Servicio</button>
                             </div>
                         </div>
 
-                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-200">
-                            <span class="text-base font-bold text-slate-800">Total a Pagar:</span>
-                            <span class="text-xl font-black text-emerald-600" id="payment-final-total">${formatMoney(order.total + defaultServiceCharge)}</span>
+                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-zinc-200">
+                            <span class="text-base font-bold text-zinc-800">Total a Pagar:</span>
+                            <span class="text-xl font-extrabold text-emerald-600" id="payment-final-total">${formatMoney(order.total + defaultServiceCharge)}</span>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Método de Pago</label>
+                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Método de Pago</label>
                         <select id="m-payment-method" class="input-pro cursor-pointer" onchange="toggleCashInput()">
                             <option value="efectivo">Efectivo</option>
                             <option value="tarjeta">Tarjeta (Crédito/Débito)</option>
@@ -1487,136 +1907,243 @@
 
                     <div id="cash-input-container" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Efectivo Recibido</label>
-                            <input type="number" id="m-payment-cash" class="input-pro text-lg font-bold text-slate-800" placeholder="Ej: 100000" oninput="calculateChange()">
+                            <label class="block text-xs font-bold text-zinc-500 uppercase mb-1">Efectivo Recibido</label>
+                            <input type="number" id="m-payment-cash" class="input-pro text-lg font-bold text-zinc-800" placeholder="Ej: 100000" oninput="calculateChange()">
                         </div>
-                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 flex justify-between items-center hidden" id="change-container">
-                            <span class="text-sm font-bold text-blue-800 uppercase tracking-wider">Cambio a devolver:</span>
-                            <span class="text-xl font-black text-blue-600" id="payment-change">$0</span>
+                        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 flex justify-between items-center hidden" id="change-container">
+                            <span class="text-sm font-bold text-indigo-800 uppercase tracking-wider">Cambio a devolver:</span>
+                            <span class="text-xl font-extrabold text-indigo-600" id="payment-change">$0</span>
                         </div>
                     </div>
 
-                    <button onclick="confirmPayment(${orderId}, ${tableId})" class="w-full mt-2 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl shadow-lg shadow-emerald-500/30 transition-colors flex items-center justify-center gap-2">
+                    <button onclick="confirmPayment(${orderId}, ${tableId})" class="w-full mt-2 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-500/30 transition-colors flex items-center justify-center gap-2">
                         <i class="ph-bold ph-check-circle text-xl"></i> Confirmar Pago
                     </button>
                 </div>
             `);
-            setTimeout(() => {
-                document.getElementById('m-payment-cash').focus();
-            }, 100);
+        setTimeout(() => {
+          document.getElementById("m-payment-cash").focus();
+        }, 100);
 
-            // Set initial total value
-            window.currentPaymentTotal = order.total + defaultServiceCharge;
-            window.currentServiceChargeAmount = defaultServiceCharge;
+        // Set initial total value
+        window.currentPaymentTotal = order.total + defaultServiceCharge;
+        window.currentServiceChargeAmount = defaultServiceCharge;
+      }
+
+      function updatePaymentTotal(baseTotal) {
+        const inputVal = document.getElementById(
+          "m-payment-service-input",
+        ).value;
+        const serviceAmount = parseInt(inputVal) || 0;
+
+        window.currentPaymentTotal = baseTotal + serviceAmount;
+        window.currentServiceChargeAmount = serviceAmount;
+
+        document.getElementById("payment-final-total").innerText = formatMoney(
+          window.currentPaymentTotal,
+        );
+        calculateChange();
+      }
+
+      function toggleCashInput() {
+        const method = document.getElementById("m-payment-method").value;
+        const container = document.getElementById("cash-input-container");
+        if (method === "efectivo") {
+          container.classList.remove("hidden");
+          setTimeout(
+            () => document.getElementById("m-payment-cash").focus(),
+            50,
+          );
+        } else {
+          container.classList.add("hidden");
+        }
+      }
+
+      function calculateChange() {
+        const method = document.getElementById("m-payment-method").value;
+        if (method !== "efectivo") return;
+
+        const cashReceived =
+          parseInt(document.getElementById("m-payment-cash").value) || 0;
+        const changeContainer = document.getElementById("change-container");
+        const changeDisplay = document.getElementById("payment-change");
+
+        const change = cashReceived - window.currentPaymentTotal;
+
+        if (cashReceived > 0 && change >= 0) {
+          changeContainer.classList.remove("hidden");
+          changeDisplay.innerText = formatMoney(change);
+          changeContainer.classList.remove("bg-red-50", "border-red-100");
+          changeContainer.classList.add("bg-indigo-50", "border-indigo-100");
+          changeDisplay.classList.remove("text-red-600");
+          changeDisplay.classList.add("text-indigo-600");
+        } else if (cashReceived > 0 && change < 0) {
+          changeContainer.classList.remove("hidden");
+          changeDisplay.innerText = "Falta " + formatMoney(Math.abs(change));
+          changeContainer.classList.remove("bg-indigo-50", "border-indigo-100");
+          changeContainer.classList.add("bg-red-50", "border-red-100");
+          changeDisplay.classList.remove("text-indigo-600");
+          changeDisplay.classList.add("text-red-600");
+        } else {
+          changeContainer.classList.add("hidden");
+        }
+      }
+
+      function confirmPayment(orderId, tableId) {
+        const order = state.orders.find((o) => o.id === orderId);
+        const method = document.getElementById("m-payment-method").value;
+
+        let cashReceived = 0;
+        let change = 0;
+
+        if (method === "efectivo") {
+          cashReceived =
+            parseInt(document.getElementById("m-payment-cash").value) || 0;
+          if (cashReceived < window.currentPaymentTotal) {
+            return notify(
+              "El efectivo recibido es menor al total a pagar",
+              "error",
+            );
+          }
+          change = cashReceived - window.currentPaymentTotal;
         }
 
-        function updatePaymentTotal(baseTotal) {
-            const inputVal = document.getElementById('m-payment-service-input').value;
-            const serviceAmount = parseInt(inputVal) || 0;
+        if (order) {
+          order.status = "paid";
+          order.paymentMethod = method;
+          order.serviceCharge = window.currentServiceChargeAmount;
+          order.finalTotal = window.currentPaymentTotal;
+          order.cashReceived =
+            method === "efectivo" ? cashReceived : window.currentPaymentTotal;
+          order.change = change;
 
-            window.currentPaymentTotal = baseTotal + serviceAmount;
-            window.currentServiceChargeAmount = serviceAmount;
-
-            document.getElementById('payment-final-total').innerText = formatMoney(window.currentPaymentTotal);
-            calculateChange();
+          // Calculate total cost of items
+          let totalCost = 0;
+          order.items.forEach((item) => {
+            const menuItem = state.menu.find((m) => m.id === item.productId);
+            if (menuItem) {
+              totalCost += (menuItem.cost || 0) * item.quantity;
+            }
+          });
+          order.totalCost = totalCost;
+          // Calculate profit: Total Sold (excluding tax/service, assuming prices have margin) - Cost
+          order.profit = order.subtotal - totalCost;
         }
 
-        function toggleCashInput() {
-            const method = document.getElementById('m-payment-method').value;
-            const container = document.getElementById('cash-input-container');
-            if (method === 'efectivo') {
-                container.classList.remove('hidden');
-                setTimeout(() => document.getElementById('m-payment-cash').focus(), 50);
-            } else {
-                container.classList.add('hidden');
-            }
+        const table = state.tables.find((t) => t.id === tableId);
+        if (table) table.status = "free";
+
+        closeModal();
+
+        let msg = `Pago procesado (${method}).`;
+        if (method === "efectivo" && change > 0) {
+          msg += ` Cambio: ${formatMoney(change)}`;
         }
 
-        function calculateChange() {
-            const method = document.getElementById('m-payment-method').value;
-            if (method !== 'efectivo') return;
+        notify(msg, "success");
+        renderCashier();
+      }
 
-            const cashReceived = parseInt(document.getElementById('m-payment-cash').value) || 0;
-            const changeContainer = document.getElementById('change-container');
-            const changeDisplay = document.getElementById('payment-change');
-
-            const change = cashReceived - window.currentPaymentTotal;
-
-            if (cashReceived > 0 && change >= 0) {
-                changeContainer.classList.remove('hidden');
-                changeDisplay.innerText = formatMoney(change);
-                changeContainer.classList.remove('bg-red-50', 'border-red-100');
-                changeContainer.classList.add('bg-blue-50', 'border-blue-100');
-                changeDisplay.classList.remove('text-red-600');
-                changeDisplay.classList.add('text-blue-600');
-            } else if (cashReceived > 0 && change < 0) {
-                changeContainer.classList.remove('hidden');
-                changeDisplay.innerText = "Falta " + formatMoney(Math.abs(change));
-                changeContainer.classList.remove('bg-blue-50', 'border-blue-100');
-                changeContainer.classList.add('bg-red-50', 'border-red-100');
-                changeDisplay.classList.remove('text-blue-600');
-                changeDisplay.classList.add('text-red-600');
-            } else {
-                changeContainer.classList.add('hidden');
-            }
-        }
-
-        function confirmPayment(orderId, tableId) {
-            const order = state.orders.find(o => o.id === orderId);
-            const method = document.getElementById('m-payment-method').value;
-
-            let cashReceived = 0;
-            let change = 0;
-
-            if (method === 'efectivo') {
-                cashReceived = parseInt(document.getElementById('m-payment-cash').value) || 0;
-                if (cashReceived < window.currentPaymentTotal) {
-                    return notify("El efectivo recibido es menor al total a pagar", "error");
-                }
-                change = cashReceived - window.currentPaymentTotal;
-            }
-
-            if (order) {
-                order.status = 'paid';
-                order.paymentMethod = method;
-                order.serviceCharge = window.currentServiceChargeAmount;
-                order.finalTotal = window.currentPaymentTotal;
-                order.cashReceived = method === 'efectivo' ? cashReceived : window.currentPaymentTotal;
-                order.change = change;
-
-                // Calculate total cost of items
-                let totalCost = 0;
-                order.items.forEach(item => {
-                    const menuItem = state.menu.find(m => m.id === item.productId);
-                    if (menuItem) {
-                        totalCost += (menuItem.cost || 0) * item.quantity;
-                    }
-                });
-                order.totalCost = totalCost;
-                // Calculate profit: Total Sold (excluding tax/service, assuming prices have margin) - Cost
-                order.profit = order.subtotal - totalCost;
-            }
-            
-            const table = state.tables.find(t => t.id === tableId);
-            if (table) table.status = 'free';
-
-            closeModal();
-
-            let msg = `Pago procesado (${method}).`;
-            if (method === 'efectivo' && change > 0) {
-                msg += ` Cambio: ${formatMoney(change)}`;
-            }
-
-            notify(msg, 'success');
-            renderCashier();
-        }
-
-        // --- INICIALIZACIÓN ---
-        window.onload = () => {
-            render();
-            // Mensaje bienvenida simulando sistema
-            setTimeout(() => notify("Sistema RestoPro iniciado y sincronizado.", "info"), 1000);
-        };
+      // --- INICIALIZACIÓN ---
+      window.onload = () => {
+        render();
+        // Mensaje bienvenida simulando sistema
+        setTimeout(
+          () => notify("Sistema RestoPro iniciado y sincronizado.", "info"),
+          1000,
+        );
+      };
     </script>
-</body>
+
+    <!-- === BOTTOM MENU MÓVIL === -->
+    <div
+      class="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-zinc-200 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)] z-[60] flex justify-around items-center px-2 py-2 pb-[env(safe-area-inset-bottom,0.5rem)]"
+    >
+      <button
+        onclick="changeView('waiter')"
+        data-bottom-view="waiter"
+        class="bottom-nav-btn flex flex-col items-center justify-center p-2 w-16 transition-all duration-300 relative text-zinc-400 group"
+      >
+        <div
+          class="icon-container relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 group-hover:bg-indigo-50"
+        >
+          <i
+            class="ph-fill ph-note-pencil text-2xl transition-transform duration-300 group-active:scale-90"
+          ></i>
+        </div>
+        <span
+          class="text-[10px] font-semibold transition-all duration-300 opacity-80 mt-0.5"
+          >Pedido</span
+        >
+      </button>
+      <button
+        onclick="changeView('kitchen')"
+        data-bottom-view="kitchen"
+        class="bottom-nav-btn flex flex-col items-center justify-center p-2 w-16 transition-all duration-300 relative text-zinc-400 group"
+      >
+        <div
+          class="icon-container relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 group-hover:bg-indigo-50"
+        >
+          <i
+            class="ph-fill ph-cooking-pot text-2xl transition-transform duration-300 group-active:scale-90"
+          ></i>
+        </div>
+        <span
+          class="text-[10px] font-semibold transition-all duration-300 opacity-80 mt-0.5"
+          >Cocina</span
+        >
+      </button>
+      <button
+        onclick="changeView('cashier')"
+        data-bottom-view="cashier"
+        class="bottom-nav-btn flex flex-col items-center justify-center p-2 w-16 transition-all duration-300 relative text-zinc-400 group"
+      >
+        <div
+          class="icon-container relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 group-hover:bg-indigo-50"
+        >
+          <i
+            class="ph-fill ph-cash-register text-2xl transition-transform duration-300 group-active:scale-90"
+          ></i>
+        </div>
+        <span
+          class="text-[10px] font-semibold transition-all duration-300 opacity-80 mt-0.5"
+          >Caja</span
+        >
+      </button>
+      <button
+        onclick="changeView('sales')"
+        data-bottom-view="sales"
+        class="bottom-nav-btn flex flex-col items-center justify-center p-2 w-16 transition-all duration-300 relative text-zinc-400 group"
+      >
+        <div
+          class="icon-container relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 group-hover:bg-indigo-50"
+        >
+          <i
+            class="ph-fill ph-chart-line-up text-2xl transition-transform duration-300 group-active:scale-90"
+          ></i>
+        </div>
+        <span
+          class="text-[10px] font-semibold transition-all duration-300 opacity-80 mt-0.5"
+          >Ventas</span
+        >
+      </button>
+      <button
+        onclick="changeView('admin', 'menu')"
+        data-bottom-view="admin"
+        class="bottom-nav-btn flex flex-col items-center justify-center p-2 w-16 transition-all duration-300 relative text-zinc-400 group"
+      >
+        <div
+          class="icon-container relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 group-hover:bg-indigo-50"
+        >
+          <i
+            class="ph-fill ph-gear text-2xl transition-transform duration-300 group-active:scale-90"
+          ></i>
+        </div>
+        <span
+          class="text-[10px] font-semibold transition-all duration-300 opacity-80 mt-0.5"
+          >Admin</span
+        >
+      </button>
+    </div>
+  </body>
 </html>
